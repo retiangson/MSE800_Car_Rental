@@ -39,7 +39,9 @@ Demonstrates **OOP principles** (encapsulation, abstraction, inheritance, polymo
 - **Audit Logging**
   - `date_created`, `date_updated`, `created_by`, and `updated_by` for **cars** and **rentals**.  
   - Provides accountability for all operations.
+  
 ![Use Case Diagram](Use_Case_Diagram.PNG)
+
 ---
 ## Class Diagram
 ![Class Diagram](Class_Diagram.PNG)
