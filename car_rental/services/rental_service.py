@@ -1,9 +1,9 @@
 from datetime import date, datetime
 
 try:
-    from car_rental.storage import cars_repo, customers_repo, rentals_repo
+    from car_rental.repository import cars_repo, customers_repo, rentals_repo
 except Exception:
-    from storage import cars_repo, customers_repo, rentals_repo
+    from repository import cars_repo, customers_repo, rentals_repo
 
 
 # -------------------- Pricing Strategies --------------------

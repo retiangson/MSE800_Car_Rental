@@ -1,7 +1,7 @@
 try:
-    from car_rental.storage import cars_repo as repo
+    from car_rental.repository import cars_repo as repo
 except Exception:
-    from storage import cars_repo as repo
+    from repository import cars_repo as repo
 
 
 def add_car(make, model, year, vtype, base_rate, user_id):

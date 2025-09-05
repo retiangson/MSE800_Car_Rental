@@ -1,7 +1,7 @@
 try:
-    from car_rental.storage import customers_repo as repo
+    from car_rental.repository import customers_repo as repo
 except Exception:
-    from storage import customers_repo as repo
+    from repository import customers_repo as repo
 
 
 

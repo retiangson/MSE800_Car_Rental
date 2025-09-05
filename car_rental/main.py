@@ -1,8 +1,8 @@
 try:
-    from car_rental.storage.db import init_db, init_users
+    from car_rental.repository.db import init_db, init_users
     from car_rental.ui.main_menu import run
 except Exception:
-    from storage.db import init_db, init_users
+    from repository.db import init_db, init_users
     from ui.main_menu import run
 
 
