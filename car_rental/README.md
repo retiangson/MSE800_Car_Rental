@@ -6,7 +6,7 @@ Demonstrates **OOP principles** (encapsulation, abstraction, inheritance, polymo
 
 ---
 
-## 🚀 Features
+## Features
 - **Role-based login system**:
   - **Manager**: full access (manage cars, employees, customers, rentals).  
   - **Employee**: limited access (manage customers, rent/return cars, search).  
@@ -42,7 +42,7 @@ Demonstrates **OOP principles** (encapsulation, abstraction, inheritance, polymo
 
 ---
 
-## 📂 Database Schema
+## Database Schema
 
 ### **users**
 - `id` (PK)  
@@ -69,16 +69,16 @@ Demonstrates **OOP principles** (encapsulation, abstraction, inheritance, polymo
 - `date_created`, `date_updated`  
 - `created_by` (FK → users.id)  
 - `updated_by` (FK → users.id)  
-
+![Database ERD](Database_Relationship_Diagram.png)
 ---
 
-## 🔑 Default Logins
+## Default Logins
 - **Manager**: `admin / admin`  
 - **Employee**: `employee / employee`  
 
 ---
 
-## 🖥️ How to Run
+## How to Run
 From the folder containing `car_rental/`, run either:
 
 ```bash
@@ -94,7 +94,7 @@ SQLite database (`car_rental.db`) initializes automatically with default users.
 
 ---
 
-## 📊 Example Menus
+## Example Menus
 
 ### Manager
 ```
@@ -131,7 +131,7 @@ SQLite database (`car_rental.db`) initializes automatically with default users.
 
 ---
 
-## 🛠️ Design Pattern
+## Design Pattern
 **Strategy Pattern** is used for rental pricing:  
 - `StandardPricing` → regular price  
 - `ElectricPricing` → 10% discount  
@@ -139,7 +139,7 @@ SQLite database (`car_rental.db`) initializes automatically with default users.
 
 ---
 
-## 📌 Notes
+## Notes
 - No external dependencies; only Python standard library.  
 - Cross-platform (Windows, macOS, Linux).  
 - Requirements are listed in `requirements.txt` (empty, since no pip installs are needed).  
