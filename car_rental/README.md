@@ -39,8 +39,10 @@ Demonstrates **OOP principles** (encapsulation, abstraction, inheritance, polymo
 - **Audit Logging**
   - `date_created`, `date_updated`, `created_by`, and `updated_by` for **cars** and **rentals**.  
   - Provides accountability for all operations.
-
+![Use Case Diagram](Use_Case_Diagram.PNG)
 ---
+## Class Diagram
+![Class Diagram](Class_Diagram.PNG)
 
 ## Database Schema
 
@@ -69,7 +71,7 @@ Demonstrates **OOP principles** (encapsulation, abstraction, inheritance, polymo
 - `date_created`, `date_updated`  
 - `created_by` (FK → users.id)  
 - `updated_by` (FK → users.id)  
-![Database ERD](Database_Relationship_Diagram.png)
+![Database ERD](Database_Relationship_Diagram.PNG)
 ---
 
 ## Default Logins
@@ -128,7 +130,7 @@ SQLite database (`car_rental.db`) initializes automatically with default users.
 9) Search rentals
 0) Exit
 ```
-
+![SActivity Diagram](Activity_Diagram.PNG)
 ---
 
 ## Design Pattern
