@@ -11,6 +11,18 @@ from ui.Rental import (
     cancel_rental_ui, return_rental_ui
 )
 
+def print_header():
+    header = r"""
+ ____             _       _   _       _    __        ___               _     
+|  _ \ ___  _ __ ( )___  | | | | ___ | |_  \ \      / / |__   ___  ___| |___ 
+| |_) / _ \| '_ \|// __| | |_| |/ _ \| __|  \ \ /\ / /| '_ \ / _ \/ _ \ / __|
+|  _ < (_) | | | | \__ \ |  _  | (_) | |_    \ V  V / | | | |  __/  __/ \__ \
+|_| \_\___/|_| |_| |___/ |_| |_|\___/ \__|    \_/\_/  |_| |_|\___|\___|_|___/
+                                                    
+                             CAR RENTAL SYSTEM
+    """
+    print(header)
+
 def car_menu(car_service):
     """Dedicated Car Management Sub-Menu"""
     while True:
@@ -141,7 +153,7 @@ def customer_menu(car_service, rental_service, user_service, user):
 
 
 def run(car_service, user_service, rental_service):
-    print("🚗 Welcome to Car Rental System 🚗")
+    print_header()
     while True:
         print("\n=== Main Menu ===")
         print("1. Login")

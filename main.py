@@ -7,9 +7,9 @@ from Business.Services.UsersService import UsersService
 from Business.Services.RentalService import RentalService
 
 if __name__ == "__main__":
-    print("🚗 Starting Car Rental System 🚗")
+    print("Starting Car Rental System.........")
 
-    # Dependency injection
+    # Dependency injection  
     car_repo = CarRepository()
     car_service = CarService(car_repo)
 
