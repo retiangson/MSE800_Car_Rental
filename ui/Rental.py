@@ -17,9 +17,9 @@ def create_rental_ui(rental_service, user):
         )
         rental_service.create_rental(new_rental)
 
-        print("✅ Rental request created (Pending approval).")
+        print("Rental request created (Pending approval).")
     except Exception as e:
-        print(f"❌ Error creating rental: {e}")
+        print(f"Error creating rental: {e}")
 
 
 def list_rentals_ui(rental_service):
@@ -44,33 +44,33 @@ def approve_and_start_rental_ui(rental_service):
     try:
         rental_id = int(input("Enter Rental ID to approve & start: "))
         if rental_service.approve_and_start_rental(rental_id):
-            print("✅ Rental approved and started. Receipt generated below:")
+            print("Rental approved and started. Receipt generated below:")
         else:
-            print("❌ Rental not found or could not be started.")
+            print("Rental not found or could not be started.")
     except Exception as e:
-        print(f"❌ Error approving & starting rental: {e}")
+        print(f"Error approving & starting rental: {e}")
 
 
 def reject_rental_ui(rental_service):
     try:
         rental_id = int(input("Enter Rental ID to reject: "))
         if rental_service.reject_rental(rental_id):
-            print("🚫 Rental rejected.")
+            print("Rental rejected.")
         else:
-            print("❌ Rental not found.")
+            print("Rental not found.")
     except Exception as e:
-        print(f"❌ Error rejecting rental: {e}")
+        print(f"Error rejecting rental: {e}")
 
 
 def cancel_rental_ui(rental_service):
     try:
         rental_id = int(input("Enter Rental ID to cancel: "))
         if rental_service.cancel_rental(rental_id):
-            print("🗑 Rental cancelled.")
+            print("Rental cancelled.")
         else:
-            print("❌ Rental not found.")
+            print("Rental not found.")
     except Exception as e:
-        print(f"❌ Error cancelling rental: {e}")
+        print(f"Error cancelling rental: {e}")
 
 
 def return_rental_ui(rental_service):
@@ -80,11 +80,11 @@ def return_rental_ui(rental_service):
         rental = rental_service.repo.find_by_id(rental_id)
 
         if not rental:
-            print("❌ Rental not found.")
+            print("Rental not found.")
             return
 
         if rental.status != "Active":
-            print(f"⚠️ Cannot return rental with status '{rental.status}'. Only Active rentals can be returned.")
+            print(f"Cannot return rental with status '{rental.status}'. Only Active rentals can be returned.")
             return
 
         # Ask for actual return date
@@ -92,12 +92,12 @@ def return_rental_ui(rental_service):
         try:
             actual_return = datetime.strptime(actual_return_date, "%Y-%m-%d")
         except ValueError:
-            print("❌ Invalid date format. Please use YYYY-MM-DD.")
+            print("Invalid date format. Please use YYYY-MM-DD.")
             return
 
         if rental_service.complete_rental(rental_id, actual_return):
-            print("✅ Rental completed. Car is now available. Final receipt generated below:")
+            print("Rental completed. Car is now available. Final receipt generated below:")
         else:
-            print("❌ Could not complete rental.")
+            print("Could not complete rental.")
     except Exception as e:
-        print(f"❌ Error returning rental: {e}")
+        print(f"Error returning rental: {e}")

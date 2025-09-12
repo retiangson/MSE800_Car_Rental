@@ -8,7 +8,7 @@ def customer_register_ui(user_service):
         confirm_password = input("Confirm password: ")
 
         if password != confirm_password:
-            print("❌ Passwords do not match!")
+            print("Passwords do not match!")
             return
 
         name = input("Full name: ")
@@ -21,6 +21,6 @@ def customer_register_ui(user_service):
                         email=email, address=address)
 
         user_service.register_user(new_user)
-        print("✅ Customer registered successfully.")
+        print("Customer registered successfully.")
     except Exception as e:
-        print(f"❌ Error registering customer: {e}")
+        print(f"Error registering customer: {e}")

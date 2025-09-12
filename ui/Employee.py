@@ -8,7 +8,7 @@ def register_user_ui(user_service):
         confirm_password = input("Confirm password: ")
 
         if password != confirm_password:
-            print("❌ Passwords do not match!")
+            print("Passwords do not match!")
             return
 
         role = input("Enter role (admin/customer): ")
@@ -22,22 +22,22 @@ def register_user_ui(user_service):
                         email=email, address=address)
 
         user_service.register_user(new_user)
-        print("✅ User registered successfully.")
+        print("User registered successfully.")
     except Exception as e:
-        print(f"❌ Error registering user: {e}")
+        print(f"Error registering user: {e}")
 
-def list_users_ui(user_service):   # 👈 must exist exactly like this
+def list_users_ui(user_service):
     print("\nAll Users:")
     users = user_service.list_users()
     for u in users:
         print(f"ID {u.id}: {u.username} ({u.role}) - {u.name}, {u.email}")
 
-def delete_user_ui(user_service):   # 👈 must exist exactly like this
+def delete_user_ui(user_service):
     try:
         user_id = int(input("Enter User ID to delete: "))
         if user_service.delete(user_id):
             print("🗑 User soft deleted.")
         else:
-            print("❌ User not found.")
+            print("User not found.")
     except Exception as e:
-        print(f"❌ Error deleting user: {e}")
+        print(f"Error deleting user: {e}")

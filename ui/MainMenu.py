@@ -46,10 +46,10 @@ def car_menu(car_service):
         elif sub_choice == "5":
             restore_car_ui(car_service)
         elif sub_choice == "0":
-            print("⬅️ Returning to Admin Menu...")
+            print("Returning to Admin Menu...")
             break
         else:
-            print("❌ Invalid choice. Please try again.")
+            print("Invalid choice. Please try again.")
 
 
 def rental_menu(rental_service):
@@ -78,10 +78,10 @@ def rental_menu(rental_service):
         elif sub_choice == "6":
             cancel_rental_ui(rental_service)
         elif sub_choice == "0":
-            print("⬅️ Returning to Admin Menu...")
+            print("Returning to Admin Menu...")
             break
         else:
-            print("❌ Invalid choice. Please try again.")
+            print("Invalid choice. Please try again.")
 
 
 def user_menu(user_service):
@@ -101,10 +101,10 @@ def user_menu(user_service):
         elif sub_choice == "3":
             delete_user_ui(user_service)
         elif sub_choice == "0":
-            print("⬅️ Returning to Admin Menu...")
+            print("Returning to Admin Menu...")
             break
         else:
-            print("❌ Invalid choice. Please try again.")
+            print("Invalid choice. Please try again.")
 
 
 def admin_menu(car_service, rental_service, user_service):
@@ -124,10 +124,10 @@ def admin_menu(car_service, rental_service, user_service):
         elif choice == "3":
             user_menu(user_service)
         elif choice == "0":
-            print("👋 Logging out...")
+            print("Logging out...")
             break
         else:
-            print("❌ Invalid choice.")
+            print("Invalid choice.")
 
 
 def customer_menu(car_service, rental_service, user_service, user):
@@ -146,10 +146,10 @@ def customer_menu(car_service, rental_service, user_service, user):
         elif choice == "2":
             create_rental_ui(rental_service, user)
         elif choice == "0":
-            print("👋 Logging out...")
+            print("Logging out...")
             break
         else:
-            print("❌ Invalid choice.")
+            print("Invalid choice.")
 
 
 def run(car_service, user_service, rental_service):
@@ -172,7 +172,7 @@ def run(car_service, user_service, rental_service):
         elif choice == "2":
             customer_register_ui(user_service)
         elif choice == "0":
-            print("👋 Exiting system. Goodbye!")
+            print("Exiting system. Goodbye!")
             break
         else:
-            print("❌ Invalid choice.")
+            print("Invalid choice.")

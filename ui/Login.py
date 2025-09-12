@@ -4,8 +4,8 @@ def login_ui(user_service):
 
     user = user_service.login_user(username, password)
     if user:
-        print(f"✅ Welcome, {user.username}! Role: {user.role}")
+        print(f"Welcome, {user.username}! Role: {user.role}")
         return user   # return the User object
     else:
-        print("❌ Invalid login.")
+        print("Invalid login.")
         return None
