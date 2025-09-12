@@ -1,72 +1,54 @@
-from typing import Optional, List, Tuple
-from datetime import date
-from .db import get_connection
+from Domain.Interfaces.ICarRepository import ICarRepository
+from Domain.Repositories.DBManager import DBManager
+from Domain.Models.Car import Car
 
-def add_car(make, model, year, vtype, base_rate, user_id) -> int:
-    conn = get_connection(); cur = conn.cursor()
-    cur.execute("""
-        INSERT INTO cars(make, model, year, "type", base_rate, status, isDeleted, isActive, created_by)
-        VALUES (?, ?, ?, ?, ?, 'available', 0, 1, ?);
-    """, (make, model, year, vtype, base_rate, user_id))
-    conn.commit(); cid = cur.lastrowid; conn.close(); return cid
+class CarRepository(ICarRepository):
+    def __init__(self):
+        self._init_table()
 
-def update_car(car_id, make=None, model=None, year=None, vtype=None, base_rate=None, user_id=None):
-    fields, vals = [], []
-    if make is not None: fields.append("make=?"); vals.append(make)
-    if model is not None: fields.append("model=?"); vals.append(model)
-    if year is not None: fields.append("year=?"); vals.append(year)
-    if vtype is not None: fields.append("type=?"); vals.append(vtype)
-    if base_rate is not None: fields.append("base_rate=?"); vals.append(base_rate)
-    if user_id is not None:
-        fields.append("date_updated=CURRENT_TIMESTAMP")
-        fields.append("updated_by=?"); vals.append(user_id)
-    if not fields: return
-    vals.append(car_id)
-    conn = get_connection(); cur = conn.cursor()
-    cur.execute(f"UPDATE cars SET {', '.join(fields)} WHERE id=?;", vals)
-    conn.commit(); conn.close()
+    def _init_table(self):
+        with DBManager() as conn:
+            cursor = conn.cursor()
+            cursor.execute("""
+                CREATE TABLE IF NOT EXISTS cars (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    make TEXT,
+                    model TEXT,
+                    year INTEGER,
+                    rate REAL,
+                    status TEXT DEFAULT 'Available'
+                )
+            """)
+            conn.commit()
 
-def list_cars(include_unavailable=True, include_deleted=False) -> List[Tuple]:
-    conn = get_connection(); cur = conn.cursor()
-    q = "SELECT id, make, model, year, type, base_rate, status FROM cars WHERE 1=1"
-    if not include_deleted: q += " AND isDeleted=0"
-    if not include_unavailable: q += " AND status='available'"
-    q += " ORDER BY id;"
-    cur.execute(q)
-    rows = cur.fetchall(); conn.close(); return rows
+    def add(self, car: Car):
+        with DBManager() as conn:
+            cursor = conn.cursor()
+            cursor.execute(
+                "INSERT INTO cars (make, model, year, rate, status) VALUES (?, ?, ?, ?, ?)",
+                (car.make, car.model, car.year, car.rate, car.status)
+            )
+            conn.commit()
+            car.id = cursor.lastrowid
+            return car
 
-def list_deleted_cars() -> List[Tuple]:
-    conn = get_connection(); cur = conn.cursor()
-    cur.execute("SELECT id, make, model, year, type, base_rate, status FROM cars WHERE isDeleted=1 ORDER BY id;")
-    rows = cur.fetchall(); conn.close(); return rows
+    def get_all(self):
+        with DBManager() as conn:
+            cursor = conn.cursor()
+            cursor.execute("SELECT id, make, model, year, rate, status FROM cars")
+            rows = cursor.fetchall()
+            return [Car(*row) for row in rows]
 
-def search_cars(keyword: str, include_deleted=False) -> List[Tuple]:
-    conn = get_connection(); cur = conn.cursor()
-    like = f"%{keyword}%"
-    q = """SELECT id, make, model, year, type, base_rate, status
-           FROM cars
-           WHERE (make LIKE ? OR model LIKE ? OR type LIKE ? OR CAST(year AS TEXT) LIKE ?)"""
-    if not include_deleted: q += " AND isDeleted=0"
-    q += " ORDER BY id;"
-    cur.execute(q, (like, like, like, like))
-    rows = cur.fetchall(); conn.close(); return rows
+    def find_by_id(self, car_id):
+        with DBManager() as conn:
+            cursor = conn.cursor()
+            cursor.execute("SELECT id, make, model, year, rate, status FROM cars WHERE id = ?", (car_id,))
+            row = cursor.fetchone()
+            return Car(*row) if row else None
 
-def get_car(car_id) -> Optional[Tuple]:
-    conn = get_connection(); cur = conn.cursor()
-    cur.execute("SELECT id, make, model, year, type, base_rate, status, isDeleted, isActive FROM cars WHERE id=?;", (car_id,))
-    row = cur.fetchone(); conn.close(); return row
-
-def set_car_status(car_id, status):
-    conn = get_connection(); cur = conn.cursor()
-    cur.execute("UPDATE cars SET status=?, date_updated=CURRENT_TIMESTAMP WHERE id=?;", (status, car_id))
-    conn.commit(); conn.close()
-
-def remove_car(car_id, user_id):
-    conn = get_connection(); cur = conn.cursor()
-    cur.execute("UPDATE cars SET isDeleted=1, date_updated=CURRENT_TIMESTAMP, updated_by=? WHERE id=?;", (user_id, car_id))
-    conn.commit(); conn.close()
-
-def restore_car(car_id, user_id):
-    conn = get_connection(); cur = conn.cursor()
-    cur.execute("UPDATE cars SET isDeleted=0, date_updated=CURRENT_TIMESTAMP, updated_by=? WHERE id=?;", (user_id, car_id))
-    conn.commit(); conn.close()
+    def update_status(self, car_id, status):
+        with DBManager() as conn:
+            cursor = conn.cursor()
+            cursor.execute("UPDATE cars SET status = ? WHERE id = ?", (status, car_id))
+            conn.commit()
+            return cursor.rowcount > 0

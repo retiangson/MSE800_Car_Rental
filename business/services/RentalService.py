@@ -1,89 +1,44 @@
-from datetime import date, datetime
+from Business.Services.Interfaces.IRentalService import IRentalService
+from Domain.Interfaces.IRentalRepository import IRentalRepository
 
-try:
-    from car_rental.repository import cars_repo, customers_repo, rentals_repo
-except Exception:
-    from repository import cars_repo, customers_repo, rentals_repo
+class RentalService(IRentalService):
+    def __init__(self, repo: IRentalRepository):
+        self.repo = repo
 
+    def create_rental(self, rental):
+        return self.repo.add(rental)
 
-# -------------------- Pricing Strategies --------------------
-class PricingStrategy:
-    def compute(self, start: date, end: date, base_rate: float) -> float:
-        raise NotImplementedError
+    def list_rentals(self, include_deleted=False, sort_by="start_date"):
+        rentals = self.repo.get_all(include_deleted=include_deleted)
+        return sorted(rentals, key=lambda r: getattr(r, sort_by, r.id))
 
-    @staticmethod
-    def _days_inclusive(start, end):
-        return max(1, (end - start).days + 1)
+    def list_active_rentals(self):
+        rentals = self.repo.get_all()
+        # Active rentals = status == "Active"
+        return list(filter(lambda r: r.status == "Active", rentals))
 
+    def approve_rental(self, rental_id):
+        return self.repo.update_status(rental_id, "Approved")
 
-class StandardPricing(PricingStrategy):
-    def compute(self, start, end, base_rate):
-        return self._days_inclusive(start, end) * base_rate
+    def reject_rental(self, rental_id):
+        return self.repo.update_status(rental_id, "Rejected")
 
+    def start_rental(self, rental_id):
+        return self.repo.update_status(rental_id, "Active")
 
-class ElectricPricing(PricingStrategy):
-    def compute(self, start, end, base_rate):
-        return self._days_inclusive(start, end) * base_rate * 0.9
+    def complete_rental(self, rental_id, car_service):
+        # mark rental completed
+        updated = self.repo.update_status(rental_id, "Completed")
+        if updated:
+            # mark car available again
+            rental = self.repo.find_by_id(rental_id)
+            if rental:
+                car_service.return_car(rental.car_id)  # reuse CarService method
+        return updated
 
+    def cancel_rental(self, rental_id):
+        return self.repo.update_status(rental_id, "Cancelled")
 
-class SUVPricing(PricingStrategy):
-    def compute(self, start, end, base_rate):
-        return self._days_inclusive(start, end) * base_rate * 1.15
-
-
-def select_pricing_strategy(vt: str) -> PricingStrategy:
-    vt = (vt or '').lower()
-    if vt == 'suv':
-        return SUVPricing()
-    if vt in ('ev', 'electric', 'electric_car'):
-        return ElectricPricing()
-    return StandardPricing()
-
-
-# -------------------- Rentals --------------------
-def rent_car(car_id, customer_email, start_date, planned_end_date, user_id):
-    car = cars_repo.get_car(car_id)
-    if not car:
-        raise ValueError("Car not found")
-    if car[6] != "available":
-        raise ValueError("Car not available")
-
-    cust = customers_repo.get_customer_by_email(customer_email)
-    if not cust:
-        raise ValueError("Customer not found")
-
-    active = rentals_repo.get_active_rental_by_car(car_id)
-    if active:
-        raise ValueError("Car already rented")
-
-    rid = rentals_repo.create_rental(car_id, cust[0], start_date, planned_end_date, user_id)
-    cars_repo.set_car_status(car_id, "rented")
-    return rid
-
-
-def return_car(car_id, returned_date, user_id):
-    car = cars_repo.get_car(car_id)
-    if not car:
-        raise ValueError("Car not found")
-
-    active = rentals_repo.get_active_rental_by_car(car_id)
-    if not active:
-        raise ValueError("No active rental")
-
-    rental_id, _, _, start_iso, _ = active
-    start_date = datetime.fromisoformat(start_iso).date()
-
-    strategy = select_pricing_strategy(car[4])
-    price = strategy.compute(start_date, returned_date, car[5])
-
-    rentals_repo.return_rental(rental_id, returned_date, price, user_id)
-    cars_repo.set_car_status(car_id, "available")
-    return price
-
-
-def list_rentals(active_only=False, include_deleted=False):
-    return rentals_repo.list_rentals(active_only, include_deleted)
-
-
-def search_rentals(car_id=None, customer_id=None, active_only=None, include_deleted=False):
-    return rentals_repo.search_rentals(car_id, customer_id, active_only, include_deleted)
+    def delete_rental(self, rental_id):
+        # Soft delete → status = Deleted
+        return self.repo.update_status(rental_id, "Deleted")

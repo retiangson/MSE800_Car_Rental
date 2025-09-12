@@ -1,12 +1,14 @@
-
-from datetime import date
-
 class Rental:
-    """Rental entity; business object separate from storage concerns."""
-    def __init__(self, car_id: int, customer_id: int, start_date: date, planned_end_date=None):
-        self.car_id = car_id
+    def __init__(self, id=None, customer_id=None, car_id=None, start_date=None, end_date=None,
+                 status="Pending"):
+        self.id = id
         self.customer_id = customer_id
+        self.car_id = car_id
         self.start_date = start_date
-        self.planned_end_date = planned_end_date
-        self.returned_date = None
-        self.total_price = None
+        self.end_date = end_date
+        # Options: Pending, Approved, Rejected, Active, Completed, Cancelled, Deleted
+        self.status = status
+
+    def __repr__(self):
+        return (f"<Rental {self.id}: Car {self.car_id}, Customer {self.customer_id}, "
+                f"{self.start_date} → {self.end_date}, Status={self.status}>")

@@ -1,7 +1,11 @@
+class Car:
+    def __init__(self, id=None, make=None, model=None, year=None, rate=0.0, status="Available"):
+        self.id = id
+        self.make = make
+        self.model = model
+        self.year = year
+        self.rate = rate
+        self.status = status  # Available, Rented, Maintenance, Deleted
 
-from .vehicle import Vehicle
-
-class Car(Vehicle):
-    """Concrete class demonstrating inheritance and polymorphism (description override)."""
-    def description(self) -> str:
-        return f"Car: {self.year} {self.make} {self.model} — type={self.vehicle_type}, base_rate={self.base_rate}"
+    def __repr__(self):
+        return f"<Car {self.id}: {self.make} {self.model} ({self.year}) - ${self.rate}/day, Status={self.status}>"

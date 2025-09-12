@@ -1,58 +1,81 @@
-from typing import Optional, List, Tuple
-from .db import get_connection
+from Domain.Interfaces.IUserRepository import IUserRepository
+from Domain.Repositories.DBManager import DBManager
+from Domain.Models.User import User
 
-def add_customer(name, email, phone) -> int:
-    conn = get_connection(); cur = conn.cursor()
-    cur.execute("""
-        INSERT INTO customers(name, email, phone, isDeleted, isActive)
-        VALUES (?, ?, ?, 0, 1);
-    """, (name, email, phone))
-    conn.commit(); cid = cur.lastrowid; conn.close(); return cid
+class UserRepository(IUserRepository):
+    def __init__(self):
+        self._init_table()
+        self._seed_default_users()
 
-def list_customers(include_deleted: bool = False) -> List[Tuple]:
-    conn = get_connection(); cur = conn.cursor()
-    q = "SELECT id, name, email, phone, isDeleted, isActive FROM customers WHERE 1=1"
-    if not include_deleted:
-        q += " AND isDeleted=0"
-    q += " ORDER BY id;"
-    cur.execute(q)
-    rows = cur.fetchall(); conn.close(); return rows
+    def _init_table(self):
+        with DBManager() as conn:
+            cursor = conn.cursor()
+            cursor.execute("""
+                CREATE TABLE IF NOT EXISTS users (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    username TEXT UNIQUE,
+                    password TEXT,
+                    role TEXT,
+                    name TEXT,
+                    contact_number TEXT,
+                    email TEXT,
+                    address TEXT,
+                    isActive INTEGER DEFAULT 1,
+                    isDeleted INTEGER DEFAULT 0
+                )
+            """)
+            conn.commit()
 
-def search_customers(keyword: str, include_deleted: bool = False) -> List[Tuple]:
-    conn = get_connection(); cur = conn.cursor()
-    like = f"%{keyword}%"
-    q = "SELECT id, name, email, phone, isDeleted, isActive FROM customers WHERE (name LIKE ? OR email LIKE ?)"
-    if not include_deleted:
-        q += " AND isDeleted=0"
-    q += " ORDER BY id;"
-    cur.execute(q, (like, like))
-    rows = cur.fetchall(); conn.close(); return rows
+    def _seed_default_users(self):
+        """Insert default admin if no users exist."""
+        with DBManager() as conn:
+            cursor = conn.cursor()
+            cursor.execute("SELECT COUNT(*) FROM users")
+            (count,) = cursor.fetchone()
+            if count == 0:
+                cursor.execute(
+                    "INSERT INTO users (username, password, role, name, contact_number, email, address, isActive, isDeleted) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                    ("admin", "admin123", "admin", "System Admin", "0000000000", "admin@system.local", "Head Office", 1, 0)
+                )
+                conn.commit()
 
-def search_customers(keyword: str, include_deleted=False) -> List[Tuple]:
-    conn = get_connection(); cur = conn.cursor()
-    like = f"%{keyword}%"
-    q = "SELECT id, name, email, phone FROM customers WHERE (name LIKE ? OR email LIKE ?)"
-    if not include_deleted: q += " AND isDeleted=0"
-    q += " ORDER BY id;"
-    cur.execute(q, (like, like))
-    rows = cur.fetchall(); conn.close(); return rows
+    def add(self, user: User):
+        with DBManager() as conn:
+            cursor = conn.cursor()
+            cursor.execute(
+                "INSERT INTO users (username, password, role, name, contact_number, email, address, isActive, isDeleted) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                (user.username, user.password, user.role, user.name,
+                 user.contact_number, user.email, user.address,
+                 int(user.isActive), int(user.isDeleted))
+            )
+            conn.commit()
+            user.id = cursor.lastrowid
+            return user
 
-def get_customer_by_email(email: str) -> Optional[Tuple]:
-    conn = get_connection(); cur = conn.cursor()
-    cur.execute("""SELECT id, name, email, phone, isDeleted, isActive
-                   FROM customers WHERE email=? AND isDeleted=0 AND isActive=1;""", (email,))
-    row = cur.fetchone(); conn.close(); return row
+    def get_all(self):
+        with DBManager() as conn:
+            cursor = conn.cursor()
+            cursor.execute("SELECT id, username, password, role, name, contact_number, email, address, isActive, isDeleted FROM users")
+            rows = cursor.fetchall()
+            return [User(*row) for row in rows]
 
-def remove_customer(customer_id: int, user_id: int):
-    conn = get_connection(); cur = conn.cursor()
-    cur.execute("""UPDATE customers
-                   SET isDeleted=1, isActive=0
-                   WHERE id=?;""", (customer_id,))
-    conn.commit(); conn.close()
+    def find_by_id(self, user_id):
+        with DBManager() as conn:
+            cursor = conn.cursor()
+            cursor.execute("SELECT id, username, password, role, name, contact_number, email, address, isActive, isDeleted FROM users WHERE id = ?", (user_id,))
+            row = cursor.fetchone()
+            return User(*row) if row else None
 
-def restore_customer(customer_id: int, user_id: int):
-    conn = get_connection(); cur = conn.cursor()
-    cur.execute("""UPDATE customers
-                   SET isDeleted=0, isActive=1
-                   WHERE id=?;""", (customer_id,))
-    conn.commit(); conn.close()
+    def find_by_username(self, username):
+        with DBManager() as conn:
+            cursor = conn.cursor()
+            cursor.execute("SELECT id, username, password, role, name, contact_number, email, address, isActive, isDeleted FROM users WHERE username = ?", (username,))
+            row = cursor.fetchone()
+            return User(*row) if row else None
+
+    def delete(self, user_id):
+        with DBManager() as conn:
+            cursor = conn.cursor()
+            cursor.execute("UPDATE users SET isDeleted = 1, isActive = 0 WHERE id = ?", (user_id,))
+            conn.commit()
+            return cursor.rowcount > 0

@@ -1,30 +1,25 @@
-try:
-    from car_rental.repository import users_repo
-except Exception:
-    from repository import users_repo
+from Business.Services.Interfaces.IUserService import IUserService
+from Domain.Interfaces.IUserRepository import IUserRepository
 
+class UsersService(IUserService):
+    def __init__(self, repo: IUserRepository):
+        self.repo = repo
 
-# -------------------- Authentication --------------------
-def login(username: str, password: str):
-    return users_repo.login(username, password)
+    def register_user(self, user):
+        return self.repo.add(user)
 
+    def login_user(self, username, password):
+        users = self.repo.get_all()
+        return next(
+            filter(lambda u: u.username == username and u.password == password and not u.isDeleted, users),
+            None
+        )
 
-def add_employee(username: str, password: str, role: str = "employee"):
-    return users_repo.add_employee(username, password, role)
+    def list_users(self, include_deleted=False, sort_by="id"):
+        users = self.repo.get_all()
+        if not include_deleted:
+            users = list(filter(lambda u: not u.isDeleted, users))
+        return sorted(users, key=lambda u: getattr(u, sort_by, u.id))
 
-
-# -------------------- User Management --------------------
-def list_users(include_deleted=False):
-    return users_repo.list_users(include_deleted)
-
-
-def search_users(keyword: str, include_deleted=False):
-    return users_repo.search_users(keyword, include_deleted)
-
-
-def remove_user(user_id, acting_user_id):
-    return users_repo.remove_user(user_id, acting_user_id)
-
-
-def restore_user(user_id, acting_user_id):
-    return users_repo.restore_user(user_id, acting_user_id)
+    def delete(self, user_id: int):
+        return self.repo.delete(user_id)

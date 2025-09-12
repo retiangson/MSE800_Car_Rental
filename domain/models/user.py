@@ -1,22 +1,17 @@
+class User:
+    def __init__(self, id=None, username=None, password=None, role="customer",
+                 name=None, contact_number=None, email=None, address=None,
+                 isActive=1, isDeleted=0):
+        self.id = id
+        self.username = username
+        self.password = password
+        self.role = role
+        self.name = name
+        self.contact_number = contact_number
+        self.email = email
+        self.address = address
+        self.isActive = bool(isActive)
+        self.isDeleted = bool(isDeleted)
 
-class Customer:
-    """Simple data model showing encapsulation."""
-    def __init__(self, name: str, email: str, phone: str):
-        self._name = name
-        self._email = email
-        self._phone = phone
-
-    @property
-    def name(self) -> str:
-        return self._name
-
-    @property
-    def email(self) -> str:
-        return self._email
-
-    @property
-    def phone(self) -> str:
-        return self._phone
-
-    def __str__(self) -> str:
-        return f"{self.name} <{self.email}> ({self.phone})"
+    def __repr__(self):
+        return f"<User {self.id}: {self.username} ({self.role})>"
