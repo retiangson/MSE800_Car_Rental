@@ -10,8 +10,12 @@ if __name__ == "__main__":
     print("🚗 Starting Car Rental System 🚗")
 
     # Dependency injection
-    car_service = CarService(CarRepository())
+    car_repo = CarRepository()
+    car_service = CarService(car_repo)
+
     user_service = UsersService(UserRepository())
-    rental_service = RentalService(RentalRepository())
+
+    rental_repo = RentalRepository()
+    rental_service = RentalService(rental_repo, car_service)  # ✅ pass car_service too
 
     run(car_service, user_service, rental_service)

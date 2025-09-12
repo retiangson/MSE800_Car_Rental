@@ -32,10 +32,13 @@ class CarRepository(ICarRepository):
             car.id = cursor.lastrowid
             return car
 
-    def get_all(self):
+    def get_all(self, include_deleted=False):
         with DBManager() as conn:
             cursor = conn.cursor()
-            cursor.execute("SELECT id, make, model, year, rate, status FROM cars")
+            if include_deleted:
+                cursor.execute("SELECT id, make, model, year, rate, status FROM cars")
+            else:
+                cursor.execute("SELECT id, make, model, year, rate, status FROM cars WHERE status != 'Deleted'")
             rows = cursor.fetchall()
             return [Car(*row) for row in rows]
 

@@ -16,7 +16,8 @@ class RentalRepository(IRentalRepository):
                     car_id INTEGER,
                     start_date TEXT,
                     end_date TEXT,
-                    status TEXT DEFAULT 'Pending'
+                    status TEXT DEFAULT 'Pending',
+                    total_cost REAL DEFAULT 0
                 )
             """)
             conn.commit()
@@ -26,15 +27,16 @@ class RentalRepository(IRentalRepository):
             cursor = conn.cursor()
             cursor.execute(
                 """
-                INSERT INTO rentals (customer_id, car_id, start_date, end_date, status)
-                VALUES (?, ?, ?, ?, ?)
+                INSERT INTO rentals (customer_id, car_id, start_date, end_date, status, total_cost)
+                VALUES (?, ?, ?, ?, ?, ?)
                 """,
                 (
                     rental.customer_id,
                     rental.car_id,
                     rental.start_date,
                     rental.end_date,
-                    rental.status or "Pending"
+                    rental.status or "Pending",
+                    getattr(rental, "total_cost", 0)  # safe default
                 )
             )
             conn.commit()
@@ -45,9 +47,9 @@ class RentalRepository(IRentalRepository):
         with DBManager() as conn:
             cursor = conn.cursor()
             if include_deleted:
-                cursor.execute("SELECT id, customer_id, car_id, start_date, end_date, status FROM rentals")
+                cursor.execute("SELECT id, customer_id, car_id, start_date, end_date, status, total_cost FROM rentals")
             else:
-                cursor.execute("SELECT id, customer_id, car_id, start_date, end_date, status FROM rentals WHERE status != 'Deleted'")
+                cursor.execute("SELECT id, customer_id, car_id, start_date, end_date, status, total_cost FROM rentals WHERE status != 'Deleted'")
             rows = cursor.fetchall()
             return [Rental(*row) for row in rows]
 
@@ -55,9 +57,9 @@ class RentalRepository(IRentalRepository):
         with DBManager() as conn:
             cursor = conn.cursor()
             if include_deleted:
-                cursor.execute("SELECT id, customer_id, car_id, start_date, end_date, status FROM rentals WHERE id = ?", (rental_id,))
+                cursor.execute("SELECT id, customer_id, car_id, start_date, end_date, status, total_cost FROM rentals WHERE id = ?", (rental_id,))
             else:
-                cursor.execute("SELECT id, customer_id, car_id, start_date, end_date, status FROM rentals WHERE id = ? AND status != 'Deleted'", (rental_id,))
+                cursor.execute("SELECT id, customer_id, car_id, start_date, end_date, status, total_cost FROM rentals WHERE id = ? AND status != 'Deleted'", (rental_id,))
             row = cursor.fetchone()
             return Rental(*row) if row else None
 
@@ -74,5 +76,13 @@ class RentalRepository(IRentalRepository):
         with DBManager() as conn:
             cursor = conn.cursor()
             cursor.execute("UPDATE rentals SET status = ? WHERE id = ?", (status, rental_id))
+            conn.commit()
+            return cursor.rowcount > 0
+
+    def update_total_cost(self, rental_id, total_cost):
+        """Update the total cost after approval"""
+        with DBManager() as conn:
+            cursor = conn.cursor()
+            cursor.execute("UPDATE rentals SET total_cost = ? WHERE id = ?", (total_cost, rental_id))
             conn.commit()
             return cursor.rowcount > 0

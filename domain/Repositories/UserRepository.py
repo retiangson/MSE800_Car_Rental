@@ -35,7 +35,7 @@ class UserRepository(IUserRepository):
             if count == 0:
                 cursor.execute(
                     "INSERT INTO users (username, password, role, name, contact_number, email, address, isActive, isDeleted) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
-                    ("admin", "admin123", "admin", "System Admin", "0000000000", "admin@system.local", "Head Office", 1, 0)
+                    ("admin", "admin", "admin", "System Admin", "0000000000", "admin@system.local", "Head Office", 1, 0)
                 )
                 conn.commit()
 

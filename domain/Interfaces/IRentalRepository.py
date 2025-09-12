@@ -25,3 +25,8 @@ class IRentalRepository(ABC):
     def update_status(self, rental_id, status: str): 
         """Update rental workflow status (Pending, Approved, Active, Completed, Cancelled, Deleted)"""
         pass
+
+    @abstractmethod
+    def update_total_cost(self, rental_id, total_cost: float):
+        """Update the total cost of a rental (calculated after approval)"""
+        pass
