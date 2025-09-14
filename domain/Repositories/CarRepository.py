@@ -70,3 +70,19 @@ class CarRepository:
             car.status = status
             db.commit()
             return True
+        
+    def update(self, car: Car) -> Car:
+        with DBManager() as db:
+            existing = db.get(Car, car.id)
+            if not existing:
+                return None
+            # overwrite fields
+            existing.make = car.make
+            existing.model = car.model
+            existing.year = car.year
+            existing.vtype = car.vtype
+            existing.base_rate = car.base_rate
+            existing.status = car.status
+            db.commit()
+            db.refresh(existing)
+            return existing

@@ -30,3 +30,8 @@ class ICarRepository(ABC):
     @abstractmethod
     def get_by_id(self, car_id: int, include_deleted: bool = False) -> Optional[Car]:
         pass
+
+    @abstractmethod
+    def update(self, car: Car) -> Car:
+        """Update car details (make, model, year, vtype, base_rate, status)."""
+        pass

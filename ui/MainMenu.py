@@ -17,11 +17,12 @@ def car_menu(car_ui):
         print("1. Add Car")
         print("2. List All Cars")
         print("3. List Available Cars")
-        print("4. Delete Car")
-        print("5. Restore Car")
-        print("6. Rent Car")
-        print("7. Return Car")
-        print("8. Send Car to Maintenance")
+        print("4. Update Car")
+        print("5. Delete Car")
+        print("6. Restore Car")
+        print("7. Rent Car")
+        print("8. Return Car")
+        print("9. Send Car to Maintenance")
         print("0. Back to Main Menu")
 
         choice = input("Choose an option: ")
@@ -33,14 +34,16 @@ def car_menu(car_ui):
         elif choice == "3":
             car_ui.list_available_cars_ui()
         elif choice == "4":
-            car_ui.delete_car_ui()
+            car_ui.update_car_ui()
         elif choice == "5":
-            car_ui.restore_car_ui()
+            car_ui.delete_car_ui()
         elif choice == "6":
-            car_ui.rent_car_ui()
+            car_ui.restore_car_ui()
         elif choice == "7":
-            car_ui.return_car_ui()
+            car_ui.rent_car_ui()
         elif choice == "8":
+            car_ui.return_car_ui()
+        elif choice == "9":
             car_ui.send_to_maintenance_ui()
         elif choice == "0":
             break
@@ -90,7 +93,8 @@ def user_menu(user_ui):
         print("\n-- User Management --")
         print("1. Register User")
         print("2. List Users")
-        print("3. Delete User")
+        print("3. Update User")
+        print("4. Delete User")
         print("0. Back to Admin Menu")
 
         sub_choice = input("Enter choice: ")
@@ -99,6 +103,8 @@ def user_menu(user_ui):
         elif sub_choice == "2":
             user_ui.list_users_ui()
         elif sub_choice == "3":
+            user_ui.update_user_ui()
+        elif sub_choice == "4":
             user_ui.delete_user_ui()
         elif sub_choice == "0":
             break
