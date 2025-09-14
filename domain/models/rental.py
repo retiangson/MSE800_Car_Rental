@@ -1,17 +1,18 @@
-class Rental:
-    def __init__(self, id=None, customer_id=None, car_id=None, start_date=None, end_date=None,
-                 status="Pending", total_cost=0):
-        self.id = id
-        self.customer_id = customer_id
-        self.car_id = car_id
-        self.start_date = start_date
-        self.end_date = end_date
-        # Workflow status
-        # Options: Pending, Approved, Rejected, Active, Completed, Cancelled, Deleted
-        self.status = status
-        self.total_cost = total_cost  # store calculated cost
+# Domain/Models/Rental.py
+from sqlalchemy import Column, Integer, String, Float, ForeignKey
+from sqlalchemy.orm import relationship
+from Domain.Repositories.DBManager import Base
 
-    def __repr__(self):
-        return (f"<Rental {self.id}: Car {self.car_id}, Customer {self.customer_id}, "
-                f"{self.start_date} → {self.end_date}, Status={self.status}, "
-                f"Total=${self.total_cost:.2f}>")
+class Rental(Base):
+    __tablename__ = "rentals"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+    car_id = Column(Integer, ForeignKey("cars.id"), nullable=False)
+    start_date = Column(String, nullable=False)
+    end_date = Column(String, nullable=False)
+    total_cost = Column(Float, default=0.0)
+    status = Column(String, default="Pending")   # Pending, Approved, Active, Completed, Cancelled, Deleted
+
+    user = relationship("User")
+    car = relationship("Car")

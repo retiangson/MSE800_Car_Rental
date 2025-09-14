@@ -1,57 +1,72 @@
-from Domain.Interfaces.ICarRepository import ICarRepository
+from typing import List, Optional
 from Domain.Repositories.DBManager import DBManager
 from Domain.Models.Car import Car
 
-class CarRepository(ICarRepository):
-    def __init__(self):
-        self._init_table()
-
-    def _init_table(self):
-        with DBManager() as conn:
-            cursor = conn.cursor()
-            cursor.execute("""
-                CREATE TABLE IF NOT EXISTS cars (
-                    id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    make TEXT,
-                    model TEXT,
-                    year INTEGER,
-                    rate REAL,
-                    status TEXT DEFAULT 'Available'
-                )
-            """)
-            conn.commit()
-
-    def add(self, car: Car):
-        with DBManager() as conn:
-            cursor = conn.cursor()
-            cursor.execute(
-                "INSERT INTO cars (make, model, year, rate, status) VALUES (?, ?, ?, ?, ?)",
-                (car.make, car.model, car.year, car.rate, car.status)
-            )
-            conn.commit()
-            car.id = cursor.lastrowid
+class CarRepository:
+    def add(self, car: Car) -> Car:
+        with DBManager() as db:
+            if not car.status:
+                car.status = "Available"  # default new car status
+            db.add(car)
+            db.flush()
+            db.refresh(car)
             return car
 
-    def get_all(self, include_deleted=False):
-        with DBManager() as conn:
-            cursor = conn.cursor()
-            if include_deleted:
-                cursor.execute("SELECT id, make, model, year, rate, status FROM cars")
-            else:
-                cursor.execute("SELECT id, make, model, year, rate, status FROM cars WHERE status != 'Deleted'")
-            rows = cursor.fetchall()
-            return [Car(*row) for row in rows]
+    def update(self, car: Car) -> Car:
+        with DBManager() as db:
+            db.add(car)
+            db.commit()
+            db.refresh(car)
+            return car
 
-    def find_by_id(self, car_id):
-        with DBManager() as conn:
-            cursor = conn.cursor()
-            cursor.execute("SELECT id, make, model, year, rate, status FROM cars WHERE id = ?", (car_id,))
-            row = cursor.fetchone()
-            return Car(*row) if row else None
+    def soft_delete(self, car_id: int) -> bool:
+        """Mark car as deleted (soft delete)."""
+        with DBManager() as db:
+            car = db.get(Car, car_id)
+            if not car:
+                return False
+            car.status = "Deleted"
+            db.commit()
+            return True
 
-    def update_status(self, car_id, status):
-        with DBManager() as conn:
-            cursor = conn.cursor()
-            cursor.execute("UPDATE cars SET status = ? WHERE id = ?", (status, car_id))
-            conn.commit()
-            return cursor.rowcount > 0
+    def restore(self, car_id: int) -> bool:
+        """Restore a previously soft-deleted car."""
+        with DBManager() as db:
+            car = db.get(Car, car_id)
+            if not car:
+                return False
+            if not car.status or car.status == "Deleted":
+                car.status = "Available"
+            db.commit()
+            return True
+
+    def get_by_id(self, car_id: int, include_deleted: bool = False) -> Optional[Car]:
+        with DBManager() as db:
+            q = db.query(Car).filter(Car.id == car_id)
+            if not include_deleted:
+                q = q.filter(Car.status != "Deleted")
+            return q.first()
+
+    def list(self, include_deleted: bool = False) -> List[Car]:
+        with DBManager() as db:
+            q = db.query(Car)
+            if not include_deleted:
+                q = q.filter(Car.status != "Deleted")
+            return q.order_by(Car.make, Car.model, Car.year).all()
+        
+    def get_all(self, include_deleted: bool = False) -> List[Car]:
+        with DBManager() as db:
+            q = db.query(Car)
+            if not include_deleted:
+                q = q.filter(Car.status != "Deleted")
+            return q.order_by(Car.make, Car.model, Car.year).all()
+        
+    def update_status(self, car_id: int, status: str) -> bool:
+        """Update only the car's status."""
+        with DBManager() as db:
+            car = db.get(Car, car_id)
+            if not car:
+                return False
+            car.status = status
+            db.commit()
+            return True

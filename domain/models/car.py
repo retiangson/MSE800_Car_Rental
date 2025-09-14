@@ -1,11 +1,14 @@
-class Car:
-    def __init__(self, id=None, make=None, model=None, year=None, rate=0.0, status="Available"):
-        self.id = id
-        self.make = make
-        self.model = model
-        self.year = year
-        self.rate = rate
-        self.status = status  # Available, Rented, Maintenance, Deleted
+# Domain/Models/Car.py
+from sqlalchemy import Column, Integer, String, Float
+from Domain.Repositories.DBManager import Base
 
-    def __repr__(self):
-        return f"<Car {self.id}: {self.make} {self.model} ({self.year}) - ${self.rate}/day, Status={self.status}>"
+class Car(Base):
+    __tablename__ = "cars"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    make = Column(String, nullable=False)
+    model = Column(String, nullable=False)
+    year = Column(Integer, nullable=False)
+    vtype = Column(String, nullable=False)   # sedan, suv, ev, etc.
+    base_rate = Column(Float, nullable=False)
+    status = Column(String, default="Active")   # Active, Deleted, Inactive
