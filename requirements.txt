@@ -1,3 +1,9 @@
-# No third-party packages required. Uses Python standard library only.
-passlib>=1.7.4
-SQLAlchemy>=2.0
+fastapi==0.110.0
+uvicorn[standard]==0.29.0
+SQLAlchemy==2.0.29
+passlib[bcrypt]==1.7.4
+pydantic==2.6.3
+alembic==1.13.1
+python-dotenv==1.0.1
+pytest==8.2.2
+faker==25.0.0

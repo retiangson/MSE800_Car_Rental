@@ -48,3 +48,12 @@ class UsersService(IUserService):
     
     def get_by_id(self, user_id):
         return self.repo.get_by_id(user_id, include_deleted=False)
+    
+    def update_user(self, dto: UserDto) -> UserDto | None:
+        user = UserMapper.from_dto(dto)
+
+        if dto.password and not dto.password.startswith("$pbkdf2-sha256$"):
+            user.password = pbkdf2_sha256.hash(dto.password)
+
+        updated = self.repo.update(user)
+        return UserMapper.to_dto(updated) if updated else None

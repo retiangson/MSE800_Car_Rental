@@ -28,6 +28,44 @@ class CarUI:
         except Exception as e:
             print(f"Error adding car: {e}")
 
+    def update_car_ui(self):
+        try:
+            car_id = int(input("Enter Car ID to update: "))
+            existing = self._car_service.get_by_id(car_id)
+            if not existing:
+                print("Car not found.")
+                return
+
+            print(f"Leave blank to keep current value.")
+
+            make = input(f"Enter new make [{existing.make}]: ") or existing.make
+            model = input(f"Enter new model [{existing.model}]: ") or existing.model
+            year_input = input(f"Enter new year [{existing.year}]: ")
+            year = int(year_input) if year_input.strip() else existing.year
+            vtype = input(f"Enter new type [{existing.vtype}]: ") or existing.vtype
+            base_rate_input = input(f"Enter new base rate [{existing.base_rate}]: ")
+            base_rate = float(base_rate_input) if base_rate_input.strip() else existing.base_rate
+            status = input(f"Enter new status [{existing.status}]: ") or existing.status
+
+            updated_dto = CarDto(
+                id=car_id,
+                make=make,
+                model=model,
+                year=year,
+                vtype=vtype,
+                base_rate=base_rate,
+                status=status
+            )
+
+            updated_car = self._car_service.update_car(updated_dto)
+            if updated_car:
+                print(f"Car updated: {updated_car.make} {updated_car.model} ({updated_car.year}), "
+                    f"${updated_car.base_rate}/day, status={updated_car.status}")
+            else:
+                print("Car not found.")
+        except Exception as e:
+            print(f"Error updating car: {e}")
+                
     def list_cars_ui(self):
         print("\nAll Cars:")
         cars = self._car_service.list_cars(include_deleted=True)

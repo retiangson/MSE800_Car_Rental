@@ -77,3 +77,20 @@ class UserRepository(IUserRepository):
             user.status = "Active"
             db.commit()
             return True
+
+    def update(self, user: User) -> User:
+        with DBManager() as db:
+            existing = db.get(User, user.id)
+            if not existing:
+                return None
+            existing.username = user.username
+            existing.password = user.password
+            existing.role = user.role
+            existing.name = user.name
+            existing.contact_number = user.contact_number
+            existing.email = user.email
+            existing.address = user.address
+            existing.status = user.status
+            db.commit()
+            db.refresh(existing)
+            return existing

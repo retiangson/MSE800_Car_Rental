@@ -47,3 +47,8 @@ class CarService(ICarService):
     def send_to_maintenance(self, car_id: int) -> bool:
         """Mark car as under Maintenance"""
         return self.repo.update_status(car_id, "Maintenance")
+
+    def update_car(self, dto: CarDto) -> CarDto | None:
+        car = CarMapper.from_dto(dto)
+        updated = self.repo.update(car)
+        return CarMapper.to_dto(updated) if updated else None

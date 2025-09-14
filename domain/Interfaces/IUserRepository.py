@@ -26,3 +26,8 @@ class IUserRepository(ABC):
     @abstractmethod
     def restore(self, user_id: int) -> bool:
         pass
+
+    @abstractmethod
+    def update(self, user: User) -> User:
+        """Update user details (name, contact, email, address, role, status)."""
+        pass

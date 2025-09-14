@@ -40,6 +40,47 @@ class UserUI:
         except Exception as e:
             print(f"Error registering user: {e}")
 
+    def update_user_ui(self):
+        try:
+            print("\n=== Update User ===")
+            user_id = int(input("Enter User ID to update: "))
+            existing = self._user_service.get_by_id(user_id)
+            if not existing:
+                print("User not found.")
+                return
+
+            print("Leave blank to keep current value.")
+
+            username = input(f"Enter new username [{existing.username}]: ") or existing.username
+            password = getpass.getpass("Enter new password (leave blank to keep unchanged): ")
+            role = input(f"Enter new role [{existing.role}]: ") or existing.role
+            name = input(f"Full name [{existing.name}]: ") or existing.name
+            contact_number = input(f"Contact number [{existing.contact_number}]: ") or existing.contact_number
+            email = input(f"Email [{existing.email}]: ") or existing.email
+            address = input(f"Address [{existing.address}]: ") or existing.address
+            status = input(f"Enter new status [{existing.status}]: ") or existing.status
+
+            updated_user_dto = UserDto(
+                id=user_id,
+                username=username,
+                password=password if password else existing.password,  # keep old if blank
+                role=role,
+                name=name,
+                contact_number=contact_number,
+                email=email,
+                address=address,
+                status=status
+            )
+
+            updated_user = self._user_service.update_user(updated_user_dto)
+            if updated_user:
+                print(f"User updated: {updated_user.username} ({updated_user.role}), Status={updated_user.status}")
+            else:
+                print("User not found.")
+        except Exception as e:
+            print(f"Error updating user: {e}")
+
+
     def list_users_ui(self):
         print("\n=== All Users ===")
         users = self._user_service.list_users()

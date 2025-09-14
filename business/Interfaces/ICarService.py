@@ -1,4 +1,6 @@
 from abc import ABC, abstractmethod
+from Contracts.CarDto import CarDto
+from typing import List, Optional
 
 class ICarService(ABC):
     @abstractmethod
@@ -15,6 +17,10 @@ class ICarService(ABC):
     def list_available_cars(self, sort_by="rate"):
         """List only cars with status=Available"""
         pass
+
+    @abstractmethod
+    def update_car(self, dto: CarDto) -> Optional[CarDto]:
+        """Update car details (make, model, year, vtype, base_rate, status)."""
 
     @abstractmethod
     def delete_car(self, car_id):
