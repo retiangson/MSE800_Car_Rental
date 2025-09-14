@@ -1,3 +1,5 @@
+import uvicorn
+
 def print_header():
     header = r"""
  ____             _       _   _       _    __        ___               _     
@@ -10,7 +12,17 @@ def print_header():
     """
     print(header)
 
+import uvicorn   # make sure this import is at the top of MainMenu.py
 
+def run_api_server():
+    print("\n🚀 Starting API server at http://127.0.0.1:8000 ...")
+    uvicorn.run(
+        "api.main_api:app",   # path to your FastAPI app instance
+        host="127.0.0.1",
+        port=8000,
+        reload=False          # disable reload in packaged exe
+    )
+    
 def car_menu(car_ui):
     while True:
         print("\n--- Car Management ---")
@@ -118,6 +130,7 @@ def admin_menu(car_ui, rental_ui, user_ui):
         print("1. Manage Cars")
         print("2. Manage Rentals")
         print("3. Manage Users")
+        print("4. Start API Server")   # ✅ new
         print("0. Logout")
 
         choice = input("Enter choice: ")
@@ -127,6 +140,8 @@ def admin_menu(car_ui, rental_ui, user_ui):
             rental_menu(rental_ui)
         elif choice == "3":
             user_menu(user_ui)
+        elif choice == "4":
+            run_api_server()   # ✅ runs uvicorn directly
         elif choice == "0":
             break
         else:
