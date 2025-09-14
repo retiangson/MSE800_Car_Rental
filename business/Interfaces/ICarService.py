@@ -30,6 +30,9 @@ class ICarService(ABC):
     def rent_car(self, car_id):
         """Mark car as Active (when a rental starts)"""
         pass
+    
+    def get_by_id(self, car_id: int) -> bool:
+        pass
 
     @abstractmethod
     def return_car(self, car_id):

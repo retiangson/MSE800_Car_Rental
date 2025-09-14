@@ -1,81 +1,79 @@
+from passlib.hash import pbkdf2_sha256
+from typing import Optional, List
 from Domain.Interfaces.IUserRepository import IUserRepository
 from Domain.Repositories.DBManager import DBManager
 from Domain.Models.User import User
 
+def _is_hashed(pwd: str) -> bool:
+    return isinstance(pwd, str) and pwd.startswith("$pbkdf2-sha256$")
+
+def _hash_if_plain(pwd: str) -> str:
+    if not pwd:
+        return pwd
+    return pwd if _is_hashed(pwd) else pbkdf2_sha256.hash(pwd)
+
 class UserRepository(IUserRepository):
     def __init__(self):
-        self._init_table()
-        self._seed_default_users()
+        pass
 
-    def _init_table(self):
-        with DBManager() as conn:
-            cursor = conn.cursor()
-            cursor.execute("""
-                CREATE TABLE IF NOT EXISTS users (
-                    id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    username TEXT UNIQUE,
-                    password TEXT,
-                    role TEXT,
-                    name TEXT,
-                    contact_number TEXT,
-                    email TEXT,
-                    address TEXT,
-                    isActive INTEGER DEFAULT 1,
-                    isDeleted INTEGER DEFAULT 0
+    def seed_default_users(self) -> None:
+        with DBManager() as db:
+            if db.query(User).count() == 0:
+                admin = User(
+                    username="admin",
+                    password=_hash_if_plain("admin"),
+                    role="admin",
+                    name="System Administrator",
+                    status="Active",
                 )
-            """)
-            conn.commit()
+                db.add(admin)
+                db.commit()
 
-    def _seed_default_users(self):
-        """Insert default admin if no users exist."""
-        with DBManager() as conn:
-            cursor = conn.cursor()
-            cursor.execute("SELECT COUNT(*) FROM users")
-            (count,) = cursor.fetchone()
-            if count == 0:
-                cursor.execute(
-                    "INSERT INTO users (username, password, role, name, contact_number, email, address, isActive, isDeleted) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
-                    ("admin", "admin", "admin", "System Admin", "0000000000", "admin@system.local", "Head Office", 1, 0)
-                )
-                conn.commit()
-
-    def add(self, user: User):
-        with DBManager() as conn:
-            cursor = conn.cursor()
-            cursor.execute(
-                "INSERT INTO users (username, password, role, name, contact_number, email, address, isActive, isDeleted) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
-                (user.username, user.password, user.role, user.name,
-                 user.contact_number, user.email, user.address,
-                 int(user.isActive), int(user.isDeleted))
-            )
-            conn.commit()
-            user.id = cursor.lastrowid
+    def add(self, user: User) -> User:
+        user.password = _hash_if_plain(user.password)
+        if not user.status:
+            user.status = "Active"
+        with DBManager() as db:
+            db.add(user)
+            db.commit()
+            db.refresh(user)
             return user
 
-    def get_all(self):
-        with DBManager() as conn:
-            cursor = conn.cursor()
-            cursor.execute("SELECT id, username, password, role, name, contact_number, email, address, isActive, isDeleted FROM users")
-            rows = cursor.fetchall()
-            return [User(*row) for row in rows]
+    def get_all(self, include_deleted: bool = False) -> List[User]:
+        with DBManager() as db:
+            q = db.query(User)
+            if not include_deleted:
+                q = q.filter(User.status != "Deleted")
+            return q.all()
 
-    def find_by_id(self, user_id):
-        with DBManager() as conn:
-            cursor = conn.cursor()
-            cursor.execute("SELECT id, username, password, role, name, contact_number, email, address, isActive, isDeleted FROM users WHERE id = ?", (user_id,))
-            row = cursor.fetchone()
-            return User(*row) if row else None
+    def get_by_id(self, user_id: int, include_deleted: bool = False) -> Optional[User]:
+        with DBManager() as db:
+            q = db.query(User).filter_by(id=user_id)
+            if not include_deleted:
+                q = q.filter(User.status != "Deleted")
+            return q.first()
 
-    def find_by_username(self, username):
-        with DBManager() as conn:
-            cursor = conn.cursor()
-            cursor.execute("SELECT id, username, password, role, name, contact_number, email, address, isActive, isDeleted FROM users WHERE username = ?", (username,))
-            row = cursor.fetchone()
-            return User(*row) if row else None
+    def find_by_username(self, username: str, include_deleted: bool = False) -> Optional[User]:
+        with DBManager() as db:
+            q = db.query(User).filter_by(username=username)
+            if not include_deleted:
+                q = q.filter(User.status != "Deleted")
+            return q.first()
 
-    def delete(self, user_id):
-        with DBManager() as conn:
-            cursor = conn.cursor()
-            cursor.execute("UPDATE users SET isDeleted = 1, isActive = 0 WHERE id = ?", (user_id,))
-            conn.commit()
-            return cursor.rowcount > 0
+    def soft_delete(self, user_id: int) -> bool:
+        with DBManager() as db:
+            user = db.get(User, user_id)
+            if not user:
+                return False
+            user.status = "Deleted"
+            db.commit()
+            return True
+
+    def restore(self, user_id: int) -> bool:
+        with DBManager() as db:
+            user = db.get(User, user_id)
+            if not user:
+                return False
+            user.status = "Active"
+            db.commit()
+            return True

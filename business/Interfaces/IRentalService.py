@@ -12,6 +12,10 @@ class IRentalService(ABC):
         pass
 
     @abstractmethod
+    def list_rentals_by_customer(self, user_id: int, include_deleted: bool = False):
+        pass
+
+    @abstractmethod
     def list_active_rentals(self):
         """List rentals with status=Active"""
         pass

@@ -1,17 +1,16 @@
-class User:
-    def __init__(self, id=None, username=None, password=None, role="customer",
-                 name=None, contact_number=None, email=None, address=None,
-                 isActive=1, isDeleted=0):
-        self.id = id
-        self.username = username
-        self.password = password
-        self.role = role
-        self.name = name
-        self.contact_number = contact_number
-        self.email = email
-        self.address = address
-        self.isActive = bool(isActive)
-        self.isDeleted = bool(isDeleted)
+# Domain/Models/User.py
+from sqlalchemy import Column, Integer, String
+from Domain.Repositories.DBManager import Base
 
-    def __repr__(self):
-        return f"<User {self.id}: {self.username} ({self.role})>"
+class User(Base):
+    __tablename__ = "users"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    username = Column(String, unique=True, nullable=False)
+    password = Column(String, nullable=False)   # hashed password
+    role = Column(String, nullable=False, default="customer")  # customer or admin
+    name = Column(String, nullable=False)
+    contact_number = Column(String, nullable=True)
+    email = Column(String, nullable=True)
+    address = Column(String, nullable=True)
+    status = Column(String, default="Active")   # Active, Deleted, Inactive

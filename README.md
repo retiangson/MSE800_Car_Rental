@@ -68,7 +68,7 @@ Demonstrates **OOP principles** (encapsulation, abstraction, inheritance, polymo
 ### **rentals**
 - `id` (PK)  
 - `car_id` (FK → cars.id)  
-- `customer_id` (FK → customers.id)  
+- `user_id` (FK → customers.id)  
 - `start_date`, `planned_end_date`, `returned_date`, `total_price`  
 - `date_created`, `date_updated`  
 - `created_by` (FK → users.id)  
