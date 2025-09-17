@@ -219,7 +219,7 @@ See full text in `LICENSE` file.
 
 **Name:** Ronald Ephraim Tiangson  
 **Programme:** Master of Software Engineering (MSE800)  
-**Institution:** Yoobee College, New Zealand
-**Supervisor Name:** Mohammad Norouzifard
+**Institution:** Yoobee College, New Zealand  
+**Supervisor Name:** Mohammad Norouzifard  
 **Date:** September 2025  
 **Contact:** retiangson@gmail.com
