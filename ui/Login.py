@@ -7,15 +7,36 @@ class LoginUI:
         """Initialize with UserService dependency."""
         self._user_service = user_service
 
-    def login_ui(self):
-        """Prompt for username and password, authenticate user."""
-        username = input("Username: ")
-        password = getpass.getpass("Password: ")
+    def login_ui(self, max_attempts: int = 3):
+        """Prompt for username and password, authenticate user with retries."""
+        attempts = 0
+        while attempts < max_attempts:
+            try:
+                username = input("Username: ").strip()
+                if not username:
+                    print("❌ Username cannot be empty.")
+                    continue
 
-        user = self._user_service.login_user(username, password)
-        if user:
-            print(f"Welcome, {user.username}! Role: {user.role}")
-            return user   # Return the authenticated UserDto
-        else:
-            print("Invalid login.")
-            return None
+                password = getpass.getpass("Password: ").strip()
+                if not password:
+                    print("❌ Password cannot be empty.")
+                    continue
+
+                user = self._user_service.login_user(username, password)
+                if user:
+                    print(f"✅ Welcome, {user.username}! Role: {user.role}")
+                    return user   # Return the authenticated UserDto
+                else:
+                    print("❌ Invalid username or password. Please try again.")
+
+            except (EOFError, KeyboardInterrupt):
+                print("\n⚠️ Login cancelled. Returning to main menu.")
+                return None
+            except Exception as e:
+                print(f"❌ Unexpected error during login: {e}")
+                return None
+
+            attempts += 1
+
+        print("⚠️ Too many failed login attempts. Returning to main menu.")
+        return None

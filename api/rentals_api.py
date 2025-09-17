@@ -1,5 +1,5 @@
-from fastapi import APIRouter, HTTPException
-from typing import List
+from fastapi import APIRouter, HTTPException, Query
+from typing import List, Optional
 from Contracts.RentalDto import RentalDto
 from Business.Services.RentalService import RentalService
 from datetime import datetime
@@ -11,6 +11,20 @@ rental_service: RentalService = None  # Injected later in main_api
 def list_rentals(include_deleted: bool = False):
     """Get all rentals (optionally include deleted)."""
     return rental_service.list_rentals(include_deleted=include_deleted)
+
+@router.get("/status/{status}", response_model=List[RentalDto])
+def list_rentals_by_status(status: str, user_id: Optional[int] = Query(None)):
+    """
+    Get rentals filtered by status (e.g., Pending, Active, Completed, Cancelled).
+    Optionally filter by customer (user_id).
+    """
+    try:
+        rentals = rental_service.get_rentals_by_status(status, include_deleted=False)
+        if user_id:
+            rentals = [r for r in rentals if r.user_id == user_id]
+        return rentals
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=f"Error retrieving rentals: {e}")
 
 @router.get("/active", response_model=List[RentalDto])
 def list_active_rentals():

@@ -3,6 +3,9 @@ from Domain.Interfaces.IRentalRepository import IRentalRepository
 from Domain.Mappers.RentalMapper import RentalMapper
 from Contracts.RentalDto import RentalDto
 from datetime import datetime
+from Business.Utils.RentalCalculator import RentalCalculator
+from Business.Utils.ReceiptPrinter import ReceiptPrinter
+from Contracts.Enums.StatusEnums import RentalStatus
 
 class RentalService(IRentalService):
     """Service layer for managing rentals (create, approve, complete, cancel)."""
@@ -23,7 +26,7 @@ class RentalService(IRentalService):
         """List all rentals, sorted by field (default start_date)."""
         rentals = self.repo.get_all(include_deleted=include_deleted)
         if not include_deleted:
-            rentals = [r for r in rentals if r.status != "Deleted"]
+            rentals = [r for r in rentals if r.status != RentalStatus.DELETED]
         dtos = [RentalMapper.to_dto(r) for r in rentals]
         return sorted(dtos, key=lambda r: getattr(r, sort_by, r.id))
     
@@ -36,79 +39,76 @@ class RentalService(IRentalService):
     def list_active_rentals(self) -> list[RentalDto]:
         """List rentals currently marked as Active."""
         rentals = self.repo.get_all()
-        active = [r for r in rentals if r.status == "Active"]
+        active = [r for r in rentals if r.status == RentalStatus.ACTIVE]
         return [RentalMapper.to_dto(r) for r in active]
+    
+    def get_rentals_by_status(self, status: str, include_deleted: bool = False) -> list[RentalDto]:
+        """
+        Get all rentals filtered by status.
+        
+        Args:
+            status (str): Rental status to filter by (e.g., "Pending", RentalStatus.ACTIVE, RentalStatus.COMPLETED).
+            include_deleted (bool): Whether to include rentals marked as Deleted.
+        
+        Returns:
+            list[RentalDto]: List of rentals with the given status.
+        """
+        rentals = self.repo.get_all(include_deleted=include_deleted)
+        filtered = [r for r in rentals if r.status == status]
+        return [RentalMapper.to_dto(r) for r in filtered]
 
     def approve_and_start_rental(self, rental_id: int) -> bool:
-        """Approve a rental request and set status to Active."""
         rental = self.repo.get_by_id(rental_id)
-        if not rental or rental.status == "Deleted":
+        if not rental or rental.status == RentalStatus.DELETED:
             return False
 
         car = self.car_service.get_by_id(rental.car_id)
-        if not car or car.status == "Deleted":
+        if not car or car.status == RentalStatus.DELETED:
             return False
 
-        # Calculate rental duration (minimum 1 day)
-        start = datetime.strptime(rental.start_date, "%Y-%m-%d")
-        end = datetime.strptime(rental.end_date, "%Y-%m-%d")
-        days = max((end - start).days, 1)
+        days = RentalCalculator.calculate_days(rental.start_date, rental.end_date)
+        total_cost = RentalCalculator.calculate_cost(car.base_rate, days)
 
-        total_cost = car.base_rate * days
-
-        # Update rental and car status
-        updated = self.repo.update_status(rental_id, "Active")
+        updated = self.repo.update_status(rental_id, RentalStatus.ACTIVE)
         if updated:
             self.repo.update_total_cost(rental_id, total_cost)
             self.car_service.rent_car(rental.car_id)
-            self.print_receipt(rental, car, days, total_cost, "INITIAL RECEIPT")
+
+            customer = self.user_service.get_by_id(rental.user_id)
+            ReceiptPrinter.print_receipt(rental, car, customer, days, total_cost, "INITIAL RECEIPT")
 
         return updated
 
     def reject_rental(self, rental_id: int) -> bool:
         """Reject a rental request."""
-        return self.repo.update_status(rental_id, "Rejected")
+        return self.repo.update_status(rental_id, RentalStatus.REJECTED)
 
     def complete_rental(self, rental_id: int, actual_return: datetime) -> bool:
-        """Complete a rental and calculate final cost based on actual return date."""
         rental = self.repo.get_by_id(rental_id)
-        if not rental or rental.status == "Deleted":
+        if not rental or rental.status == RentalStatus.DELETED:
             return False
 
         car = self.car_service.get_by_id(rental.car_id)
-        if not car or car.status == "Deleted":
+        if not car or car.status == RentalStatus.DELETED:
             return False
 
-        # Duration calculation
-        start = datetime.strptime(rental.start_date, "%Y-%m-%d")
-        days = max((actual_return - start).days, 1)
-        total_cost = car.base_rate * days
+        days = RentalCalculator.calculate_days(rental.start_date, actual_return, actual_return=True)
+        total_cost = RentalCalculator.calculate_cost(car.base_rate, days)
 
-        updated = self.repo.update_status(rental_id, "Completed")
+        updated = self.repo.update_status(rental_id, RentalStatus.COMPLETED)
         if updated:
             self.repo.update_total_cost(rental_id, total_cost)
             self.car_service.return_car(rental.car_id)
-            self.print_receipt(rental, car, days, total_cost, "FINAL RECEIPT")
+
+            customer = self.user_service.get_by_id(rental.user_id)
+            ReceiptPrinter.print_receipt(rental, car, customer, days, total_cost, "FINAL RECEIPT")
 
         return updated
 
     def cancel_rental(self, rental_id: int) -> bool:
         """Cancel a rental request."""
-        return self.repo.update_status(rental_id, "Cancelled")
+        return self.repo.update_status(rental_id, RentalStatus.CANCELLED)
 
     def delete_rental(self, rental_id: int) -> bool:
         """Soft delete a rental (mark as Deleted)."""
-        return self.repo.update_status(rental_id, "Deleted")
-    
-    def print_receipt(self, rental, car, days: int, total_cost: float, title="RECEIPT"):
-        """Print a rental receipt (basic console output)."""
-        customer = self.user_service.get_by_id(rental.user_id)
-
-        print(f"\n===== {title} =====")
-        print(f"Rental ID   : {rental.id}")
-        print(f"Customer    : {customer.name} ({customer.email})")
-        print(f"Car         : {car.make} {car.model} ({car.year})")
-        print(f"Period      : {rental.start_date} → {rental.end_date} ({days} days)")
-        print(f"Rate/Day    : ${car.base_rate:.2f}")
-        print(f"Total Cost  : ${total_cost:.2f}")
-        print("==========================\n")
+        return self.repo.update_status(rental_id, RentalStatus.DELETED)

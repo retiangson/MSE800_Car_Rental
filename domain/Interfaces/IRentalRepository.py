@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import List, Optional
 from Domain.Models.Rental import Rental
+from Contracts.Enums.StatusEnums import RentalStatus
 
 class IRentalRepository(ABC):
     """Interface defining CRUD and soft-delete operations for Rental."""
@@ -31,7 +32,7 @@ class IRentalRepository(ABC):
         pass
 
     @abstractmethod
-    def update_status(self, rental_id: int, status: str) -> bool:
+    def update_status(self, rental_id: int, status: RentalStatus) -> bool:
         """Update only the rental's status (Pending, Approved, Active, Completed, etc.)."""
         pass
 

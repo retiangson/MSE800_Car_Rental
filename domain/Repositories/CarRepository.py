@@ -1,6 +1,7 @@
 from typing import List, Optional
 from Domain.Repositories.DBManager import DBManager
 from Domain.Models.Car import Car
+from Contracts.Enums.StatusEnums import CarStatus
 
 class CarRepository:
     """
@@ -42,7 +43,7 @@ class CarRepository:
             car = db.get(Car, car_id)
             if not car:
                 return False
-            car.status = "Deleted"
+            car.status = CarStatus.DELETED
             db.commit()
             return True
 
@@ -56,8 +57,8 @@ class CarRepository:
             car = db.get(Car, car_id)
             if not car:
                 return False
-            if not car.status or car.status == "Deleted":
-                car.status = "Available"
+            if not car.status or car.status == CarStatus.DELETED:
+                car.status = CarStatus.AVAILABLE
             db.commit()
             return True
 
@@ -69,7 +70,7 @@ class CarRepository:
         with DBManager() as db:
             q = db.query(Car).filter(Car.id == car_id)
             if not include_deleted:
-                q = q.filter(Car.status != "Deleted")
+                q = q.filter(Car.status != CarStatus.DELETED)
             return q.first()
 
     def list(self, include_deleted: bool = False) -> List[Car]:
@@ -81,7 +82,7 @@ class CarRepository:
         with DBManager() as db:
             q = db.query(Car)
             if not include_deleted:
-                q = q.filter(Car.status != "Deleted")
+                q = q.filter(Car.status != CarStatus.DELETED)
             return q.order_by(Car.make, Car.model, Car.year).all()
         
     def get_all(self, include_deleted: bool = False) -> List[Car]:
@@ -92,13 +93,17 @@ class CarRepository:
         with DBManager() as db:
             q = db.query(Car)
             if not include_deleted:
-                q = q.filter(Car.status != "Deleted")
+                q = q.filter(Car.status != CarStatus.DELETED)
             return q.order_by(Car.make, Car.model, Car.year).all()
         
-    def update_status(self, car_id: int, status: str) -> bool:
+    def update_status(self, car_id: int, status: CarStatus) -> bool:
         """
-        Update only the status of a car (e.g., Available, Inactive, Deleted).
-        Returns True if update successful, False if car not found.
+        Update only the status of a car.
+        Args:
+            car_id (int): The ID of the car to update.
+            status (CarStatus): New status (Available, Active, Maintenance, Inactive, Deleted).
+        Returns:
+            bool: True if updated successfully, False if car not found.
         """
         with DBManager() as db:
             car = db.get(Car, car_id)
