@@ -208,7 +208,7 @@ See full text in `LICENSE` file.
 **Programme:** Master of Software Engineering (MSE800)
 **Institution:** Yoobee College, New Zealand
 **Date:** September 2025
-**Contact:** \retiangson@gmail.com
+**Contact:** retiangson@gmail.com
 
 ---
 
