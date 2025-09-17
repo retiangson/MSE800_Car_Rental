@@ -21,7 +21,7 @@ app.include_router(cars_api.router)
 app.include_router(users_api.router)
 app.include_router(rentals_api.router)
 
-
 @app.get("/")
 def root():
+    """Root endpoint providing a welcome message."""
     return {"message": "Welcome to the Car Rental API 🚗"}

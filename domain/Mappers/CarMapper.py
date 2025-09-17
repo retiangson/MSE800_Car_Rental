@@ -2,8 +2,13 @@ from Domain.Models.Car import Car
 from Contracts.CarDto import CarDto
 
 class CarMapper:
+    """
+    Mapper for converting between Car ORM model and CarDto.
+    Used to avoid exposing raw ORM models outside of the repository layer.
+    """
     @staticmethod
     def to_dto(car: Car) -> CarDto:
+        """Convert Car model to CarDto."""
         return CarDto(
             id=car.id,
             make=car.make,
@@ -16,6 +21,7 @@ class CarMapper:
 
     @staticmethod
     def from_dto(dto: CarDto) -> Car:
+        """Convert CarDto to Car model."""
         return Car(
             id=dto.id,
             make=dto.make,

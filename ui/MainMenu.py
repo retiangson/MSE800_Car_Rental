@@ -22,7 +22,7 @@ def run_api_server():
         port=8000,
         reload=False          # disable reload in packaged exe
     )
-    
+
 def car_menu(car_ui):
     while True:
         print("\n--- Car Management ---")
@@ -130,7 +130,7 @@ def admin_menu(car_ui, rental_ui, user_ui):
         print("1. Manage Cars")
         print("2. Manage Rentals")
         print("3. Manage Users")
-        print("4. Start API Server")   # ✅ new
+        print("4. Start API Server")
         print("0. Logout")
 
         choice = input("Enter choice: ")
@@ -141,7 +141,7 @@ def admin_menu(car_ui, rental_ui, user_ui):
         elif choice == "3":
             user_menu(user_ui)
         elif choice == "4":
-            run_api_server()   # ✅ runs uvicorn directly
+            run_api_server()
         elif choice == "0":
             break
         else:
