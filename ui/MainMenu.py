@@ -22,11 +22,11 @@ def safe_input(prompt: str, valid_options: list[str] = None) -> str:
         try:
             choice = input(prompt).strip()
             if valid_options and choice not in valid_options:
-                print(f"❌ Invalid choice. Allowed: {', '.join(valid_options)}")
+                print(f"Invalid choice. Allowed: {', '.join(valid_options)}")
                 continue
             return choice
         except (EOFError, KeyboardInterrupt):
-            print("\n⚠️ Input cancelled. Returning to menu.")
+            print("\nInput cancelled. Returning to menu.")
             return "0"
 
 def safe_int_input(prompt: str) -> int:
@@ -35,14 +35,14 @@ def safe_int_input(prompt: str) -> int:
         try:
             return int(input(prompt).strip())
         except ValueError:
-            print("❌ Please enter a valid number.")
+            print("Please enter a valid number.")
 
 # -------------------------------
 # API Server Runner
 # -------------------------------
 
 def run_api_server():
-    print("\n🚀 Starting API server at http://127.0.0.1:8000 ...")
+    print("\nStarting API server at http://127.0.0.1:8000 ...")
     try:
         uvicorn.run(
             "api.main_api:app",
@@ -51,7 +51,7 @@ def run_api_server():
             reload=False
         )
     except Exception as e:
-        print(f"❌ Failed to start API server: {e}")
+        print(f"Failed to start API server: {e}")
 
 # -------------------------------
 # Menus
@@ -84,7 +84,7 @@ def car_menu(car_ui):
             elif choice == "9": car_ui.send_to_maintenance_ui()
             elif choice == "0": break
         except Exception as e:
-            print(f"❌ Error in Car Menu: {e}")
+            print(f"Error in Car Menu: {e}")
 
 def rental_menu(rental_ui):
     while True:
@@ -111,7 +111,7 @@ def rental_menu(rental_ui):
             elif choice == "8": rental_ui.delete_rental_ui()
             elif choice == "0": break
         except Exception as e:
-            print(f"❌ Error in Rental Menu: {e}")
+            print(f"Error in Rental Menu: {e}")
 
 def user_menu(user_ui):
     while True:
@@ -130,7 +130,7 @@ def user_menu(user_ui):
             elif choice == "4": user_ui.delete_user_ui()
             elif choice == "0": break
         except Exception as e:
-            print(f"❌ Error in User Menu: {e}")
+            print(f"Error in User Menu: {e}")
 
 def admin_menu(car_ui, rental_ui, user_ui):
     while True:
@@ -165,7 +165,7 @@ def customer_menu(car_ui, rental_ui, current_user):
             elif choice == "4": rental_ui.list_customer_rentals_ui(current_user, include_deleted=False)
             elif choice == "0": break
         except Exception as e:
-            print(f"❌ Error in Customer Menu: {e}")
+            print(f"Error in Customer Menu: {e}")
 
 # -------------------------------
 # Main Entry
@@ -195,12 +195,12 @@ def run(installer):
                     elif user.role == "customer":
                         customer_menu(car_ui, rental_ui, user) 
             except Exception as e:
-                print(f"❌ Login error: {e}")
+                print(f"Login error: {e}")
         elif choice == "2":
             try:
                 customer_ui.customer_register_ui()
             except Exception as e:
-                print(f"❌ Registration error: {e}")
+                print(f"Registration error: {e}")
         elif choice == "0":
-            print("👋 Exiting system. Goodbye!")
+            print("Exiting system. Goodbye!")
             break

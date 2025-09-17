@@ -1,7 +1,7 @@
 import pytest
 from fastapi.testclient import TestClient
 from api.main_api import app
-from Contracts.Enums.StatusEnums import CarStatus  # ✅ enums
+from Contracts.Enums.StatusEnums import CarStatus
 
 client = TestClient(app)
 
@@ -13,7 +13,7 @@ def test_add_and_list_cars():
         "year": 2021,
         "vtype": "sedan",
         "base_rate": 60.0,
-        "status": CarStatus.AVAILABLE.value  # ✅ enum
+        "status": CarStatus.AVAILABLE.value 
     }
     response = client.post("/cars/", json=payload)
     assert response.status_code == 200

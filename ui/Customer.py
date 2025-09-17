@@ -18,7 +18,7 @@ class CustomerUI:
             try:
                 username = input("Choose username: ").strip()
                 if not username:
-                    print("❌ Username cannot be empty.")
+                    print("Username cannot be empty.")
                     attempts += 1
                     continue
 
@@ -27,18 +27,18 @@ class CustomerUI:
                 confirm_password = getpass.getpass("Confirm password: ").strip()
 
                 if not password:
-                    print("❌ Password cannot be empty.")
+                    print("Password cannot be empty.")
                     attempts += 1
                     continue
 
                 if password != confirm_password:
-                    print("❌ Passwords do not match. Try again.")
+                    print("Passwords do not match. Try again.")
                     attempts += 1
                     continue
 
                 name = input("Full name: ").strip()
                 if not name:
-                    print("❌ Full name cannot be empty.")
+                    print("Full name cannot be empty.")
                     attempts += 1
                     continue
 
@@ -59,15 +59,15 @@ class CustomerUI:
                 )
 
                 saved_user = self._user_service.register_user(new_user_dto)
-                print(f"✅ Customer registered successfully: {saved_user.username} ({saved_user.role.value})")
+                print(f"Customer registered successfully: {saved_user.username} ({saved_user.role.value})")
                 return saved_user
 
             except (EOFError, KeyboardInterrupt):
-                print("\n⚠️ Registration cancelled. Returning to main menu.")
+                print("\nRegistration cancelled. Returning to main menu.")
                 return None
             except Exception as e:
-                print(f"❌ Error registering customer: {e}")
+                print(f"Error registering customer: {e}")
                 return None
 
-        print("⚠️ Too many failed attempts. Returning to main menu.")
+        print("Too many failed attempts. Returning to main menu.")
         return None

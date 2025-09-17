@@ -8,7 +8,7 @@ def safe_int_input(prompt: str) -> int:
         try:
             return int(input(prompt).strip())
         except ValueError:
-            print("❌ Please enter a valid number.")
+            print("Please enter a valid number.")
 
 class UserUI:
     """UI layer for admin/employee user management (create, update, list, delete)."""
@@ -22,17 +22,17 @@ class UserUI:
             print("\n=== Register New User ===")
             username = input("Enter username: ").strip()
             if not username:
-                print("❌ Username cannot be empty.")
+                print("Username cannot be empty.")
                 return
 
             password = getpass.getpass("Enter password: ").strip()
             confirm_password = getpass.getpass("Confirm password: ").strip()
 
             if not password:
-                print("❌ Password cannot be empty.")
+                print("Password cannot be empty.")
                 return
             if password != confirm_password:
-                print("❌ Passwords do not match.")
+                print("Passwords do not match.")
                 return
 
             # Role selection via enum
@@ -42,7 +42,7 @@ class UserUI:
             elif role_input == "customer":
                 role = "customer"
             else:
-                print("❌ Role must be 'admin' or 'customer'.")
+                print("Role must be 'admin' or 'customer'.")
                 return
 
             name = input("Full name: ").strip()
@@ -59,15 +59,15 @@ class UserUI:
                 contact_number=contact_number,
                 email=email,
                 address=address,
-                status=UserStatus.ACTIVE  # ✅ default enum
+                status=UserStatus.ACTIVE
             )
 
             saved_user = self._user_service.register_user(new_user_dto)
-            print(f"✅ User registered: {saved_user.username} ({saved_user.role.value})")
+            print(f"User registered: {saved_user.username} ({saved_user.role.value})")
         except (EOFError, KeyboardInterrupt):
-            print("\n⚠️ Registration cancelled.")
+            print("\nRegistration cancelled.")
         except Exception as e:
-            print(f"❌ Error registering user: {e}")
+            print(f"Error registering user: {e}")
 
     def update_user_ui(self):
         """Prompt admin to update an existing user's details."""
@@ -76,7 +76,7 @@ class UserUI:
             user_id = safe_int_input("Enter User ID to update: ")
             existing = self._user_service.get_by_id(user_id)
             if not existing:
-                print("⚠️ User not found.")
+                print("User not found.")
                 return
 
             print("Leave blank to keep current value.")
@@ -93,7 +93,7 @@ class UserUI:
             elif role_input == "customer":
                 role = "customer"
             else:
-                print("❌ Invalid role, keeping current.")
+                print("Invalid role, keeping current.")
                 role = existing.role
 
             name = input(f"Full name [{existing.name}]: ").strip() or existing.name
@@ -109,7 +109,7 @@ class UserUI:
                 try:
                     status = UserStatus(status_input)
                 except ValueError:
-                    print("❌ Invalid status, keeping current.")
+                    print("Invalid status, keeping current.")
                     status = existing.status
 
             updated_user_dto = UserDto(
@@ -126,13 +126,13 @@ class UserUI:
 
             updated_user = self._user_service.update_user(updated_user_dto)
             if updated_user:
-                print(f"✅ User updated: {updated_user.username} ({updated_user.role.value}), Status={updated_user.status.value}")
+                print(f"User updated: {updated_user.username} ({updated_user.role.value}), Status={updated_user.status.value}")
             else:
-                print("⚠️ User not found.")
+                print("User not found.")
         except (EOFError, KeyboardInterrupt):
-            print("\n⚠️ Update cancelled.")
+            print("\nUpdate cancelled.")
         except Exception as e:
-            print(f"❌ Error updating user: {e}")
+            print(f"Error updating user: {e}")
 
     def list_users_ui(self):
         """Display all users in the system."""
@@ -140,22 +140,22 @@ class UserUI:
         try:
             users = self._user_service.list_users()
             if not users:
-                print("⚠️ No users found.")
+                print("No users found.")
                 return
             for u in users:
                 print(f"ID {u.id}: {u.username} ({u.role}) - {u.name}, {u.email}, Status={u.status.value}")
         except Exception as e:
-            print(f"❌ Error listing users: {e}")
+            print(f"Error listing users: {e}")
 
     def delete_user_ui(self):
         """Soft delete a user (mark as Deleted)."""
         try:
             user_id = safe_int_input("Enter User ID to delete: ")
             if self._user_service.delete(user_id):
-                print("🗑 User soft deleted.")
+                print("User soft deleted.")
             else:
-                print("⚠️ User not found.")
+                print("User not found.")
         except (EOFError, KeyboardInterrupt):
-            print("\n⚠️ Delete cancelled.")
+            print("\nDelete cancelled.")
         except Exception as e:
-            print(f"❌ Error deleting user: {e}")
+            print(f"Error deleting user: {e}")

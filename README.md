@@ -1,6 +1,6 @@
-# 🚗 Car Rental System – User Documentation  
+# Car Rental System – User Documentation  
 
-## 📌 Overview  
+## Overview  
 The **Car Rental System** is a Python-based application designed to automate the rental process for a car rental company.  
 It replaces manual paperwork with a digital solution that supports **user management, car management, rental booking, and rental lifecycle management**.  
 
@@ -8,20 +8,7 @@ The system follows **Object-Oriented Programming (OOP)** principles, **layered a
 
 ---
 
-Great idea 👍 I’ll integrate this into your **“Running the Application”** section so users have all 4 options:
-
-1. CLI
-2. Executable build
-3. API Server
-4. Prebuilt ZIP (standalone)
-
-And I’ll also add an **“Initial Admin Access”** section so users know the default login credentials.
-
-Here’s the improved version for your README:
-
----
-
-## ⚙️ Installation & Configuration
+## Installation & Configuration
 
 ### 1. Requirements
 
@@ -46,7 +33,7 @@ pip install -r requirements.txt
 
 ---
 
-### 3. 🚀 Running the Application
+### 3. Running the Application
 
 You have multiple ways to run the system:
 
@@ -105,18 +92,41 @@ This version does not require Python or dependencies.
 
 ---
 
-## 🔑 Initial Admin Access
+## Initial Admin Access
 
 When you first run the system, it will automatically seed a default **Admin user** if no users exist.
 
 * **Username:** `admin`
 * **Password:** `admin`
 
-⚠️ It is recommended to log in as Admin immediately and **create new users** for proper role management.
+It is recommended to log in as Admin immediately and **create new users** for proper role management.
 
 ---
 
-## 📂 Project Structure & File Purpose  
+## Running Tests
+
+Unit tests are located in the `tests/` directory and use **pytest**.
+
+Run all tests with:
+
+```bash
+pytest
+```
+
+Run tests with detailed output:
+
+```bash
+pytest -v
+```
+
+Run a specific test file:
+
+```bash
+pytest tests/test_car_service.py
+```
+---
+
+## Project Structure & File Purpose  
 
 ```
 MSE800_Car_Rental/
@@ -160,7 +170,7 @@ MSE800_Car_Rental/
 
 ---
 
-## 👥 Roles & Features  
+## Roles & Features  
 
 ### Admin Features  
 - Manage Users (register, list, soft-delete)  
@@ -176,7 +186,7 @@ MSE800_Car_Rental/
 
 ---
 
-## 📊 System Design  
+## System Design  
 
 - **Use Case Diagram:** shows Admin & Customer interactions  
 - **Sequence Diagram:** illustrates request → UI → Service → Database flow  
@@ -184,17 +194,17 @@ MSE800_Car_Rental/
 
 ---
 
-## 📜 License  
+## License  
 
 This project is released under the **MIT License**:  
-- ✅ Free to use, modify, and distribute.  
-- ❌ No warranty provided.  
+- Free to use, modify, and distribute.  
+- No warranty provided.  
 
 See full text in `LICENSE` file.  
 
 ---
 
-## 🐞 Known Issues / Bugs  
+## Known Issues / Bugs  
 
 - UI currently runs in console only (no GUI frontend).  
 - Database defaults to SQLite (`car_rental.db`). Multi-user concurrency may need PostgreSQL or MySQL.  
@@ -203,12 +213,13 @@ See full text in `LICENSE` file.
 
 ---
 
-## 👨‍💻 Developer Credit  
+## Developer Credit  
 
 **Car Rental System** was developed by:  
 
 **Name:** Ronald Ephraim Tiangson  
 **Programme:** Master of Software Engineering (MSE800)  
-**Institution:** Yoobee College, New Zealand  
+**Institution:** Yoobee College, New Zealand
+**Supervisor Name:** Mohammad Norouzifard
 **Date:** September 2025  
-**Contact:** [your email / GitHub link]  
+**Contact:** retiangson@gmail.com

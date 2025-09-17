@@ -1,5 +1,5 @@
 from Contracts.CarDto import CarDto
-from Contracts.Enums.StatusEnums import CarStatus  # ✅ contracts only
+from Contracts.Enums.StatusEnums import CarStatus
 
 def safe_int_input(prompt: str) -> int:
     """Ensure user enters a valid integer."""
@@ -7,7 +7,7 @@ def safe_int_input(prompt: str) -> int:
         try:
             return int(input(prompt).strip())
         except ValueError:
-            print("❌ Please enter a valid number.")
+            print("Please enter a valid number.")
 
 def safe_float_input(prompt: str) -> float:
     """Ensure user enters a valid float."""
@@ -15,7 +15,7 @@ def safe_float_input(prompt: str) -> float:
         try:
             return float(input(prompt).strip())
         except ValueError:
-            print("❌ Please enter a valid decimal number.")
+            print("Please enter a valid decimal number.")
 
 class CarUI:
     """UI layer for managing car operations (add, update, list, delete, restore, etc.)."""
@@ -34,7 +34,7 @@ class CarUI:
             base_rate = safe_float_input("Enter daily base rate: ")
 
             if not make or not model or not vtype:
-                print("❌ Make, model, and type cannot be empty.")
+                print("Make, model, and type cannot be empty.")
                 return
 
             new_car_dto = CarDto(
@@ -48,10 +48,10 @@ class CarUI:
             )
 
             saved_car = self._car_service.add_car(new_car_dto)
-            print(f"✅ Car added successfully: {saved_car.make} {saved_car.model} "
+            print(f"Car added successfully: {saved_car.make} {saved_car.model} "
                   f"({saved_car.year}) - ${saved_car.base_rate}/day, status={saved_car.status}.")
         except Exception as e:
-            print(f"❌ Error adding car: {e}")
+            print(f"Error adding car: {e}")
 
     def update_car_ui(self):
         """Prompt user for updates to an existing car."""
@@ -59,7 +59,7 @@ class CarUI:
             car_id = safe_int_input("Enter Car ID to update: ")
             existing = self._car_service.get_by_id(car_id)
             if not existing:
-                print("⚠️ Car not found.")
+                print("Car not found.")
                 return
 
             print("Leave blank to keep current value.")
@@ -85,12 +85,12 @@ class CarUI:
 
             updated_car = self._car_service.update_car(updated_dto)
             if updated_car:
-                print(f"✅ Car updated: {updated_car.make} {updated_car.model} ({updated_car.year}), "
+                print(f"Car updated: {updated_car.make} {updated_car.model} ({updated_car.year}), "
                       f"${updated_car.base_rate}/day, status={updated_car.status}")
             else:
-                print("⚠️ Car not found.")
+                print("Car not found.")
         except Exception as e:
-            print(f"❌ Error updating car: {e}")
+            print(f"Error updating car: {e}")
 
     def list_cars_ui(self):
         """List all cars (including deleted ones)."""
@@ -98,13 +98,13 @@ class CarUI:
         try:
             cars = self._car_service.list_cars(include_deleted=True)
             if not cars:
-                print("⚠️ No cars found.")
+                print("No cars found.")
                 return
             for car in cars:
                 print(f"{car.id}: {car.make} {car.model} ({car.year}) - "
                       f"${car.base_rate}/day - Status: {car.status}")
         except Exception as e:
-            print(f"❌ Error listing cars: {e}")
+            print(f"Error listing cars: {e}")
 
     def list_available_cars_ui(self):
         """List only cars available for rental."""
@@ -112,13 +112,13 @@ class CarUI:
         try:
             cars = self._car_service.list_available_cars()
             if not cars:
-                print("⚠️ No available cars.")
+                print("No available cars.")
                 return
             for car in cars:
                 print(f"{car.id}: {car.make} {car.model} ({car.year}) - "
                       f"${car.base_rate}/day - Status: {car.status}")
         except Exception as e:
-            print(f"❌ Error listing available cars: {e}")
+            print(f"Error listing available cars: {e}")
 
     def delete_car_ui(self):
         """Soft delete a car (mark status as Deleted)."""
@@ -127,50 +127,50 @@ class CarUI:
             if self._car_service.delete_car(car_id):
                 print("🗑 Car marked as Deleted.")
             else:
-                print("⚠️ Car not found.")
+                print("Car not found.")
         except Exception as e:
-            print(f"❌ Error deleting car: {e}")
+            print(f"Error deleting car: {e}")
 
     def restore_car_ui(self):
         """Restore a previously deleted car (set status to Available)."""
         try:
             car_id = safe_int_input("Enter Car ID to restore (make Available): ")
             if self._car_service.restore_car(car_id):
-                print("✅ Car restored and set to Available.")
+                print("Car restored and set to Available.")
             else:
-                print("⚠️ Car not found or not in Deleted status.")
+                print("Car not found or not in Deleted status.")
         except Exception as e:
-            print(f"❌ Error restoring car: {e}")
+            print(f"Error restoring car: {e}")
 
     def rent_car_ui(self):
         """Mark a car as Active (rented)."""
         try:
             car_id = safe_int_input("Enter Car ID to mark as Active (rented): ")
             if self._car_service.rent_car(car_id):
-                print("✅ Car marked as Active (rented).")
+                print("Car marked as Active (rented).")
             else:
-                print("⚠️ Car not found.")
+                print("Car not found.")
         except Exception as e:
-            print(f"❌ Error renting car: {e}")
+            print(f"Error renting car: {e}")
 
     def return_car_ui(self):
         """Mark a car as Available (returned)."""
         try:
             car_id = safe_int_input("Enter Car ID to mark as Available (returned): ")
             if self._car_service.return_car(car_id):
-                print("✅ Car returned and marked as Available.")
+                print("Car returned and marked as Available.")
             else:
-                print("⚠️ Car not found.")
+                print("Car not found.")
         except Exception as e:
-            print(f"❌ Error returning car: {e}")
+            print(f"Error returning car: {e}")
 
     def send_to_maintenance_ui(self):
         """Mark a car as under Maintenance."""
         try:
             car_id = safe_int_input("Enter Car ID to mark as under Maintenance: ")
             if self._car_service.send_to_maintenance(car_id):
-                print("🛠 Car marked as under Maintenance.")
+                print("Car marked as under Maintenance.")
             else:
-                print("⚠️ Car not found.")
+                print("Car not found.")
         except Exception as e:
-            print(f"❌ Error sending car to maintenance: {e}")
+            print(f"Error sending car to maintenance: {e}")
