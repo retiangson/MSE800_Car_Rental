@@ -1,4 +1,5 @@
-# Support & Maintenance of Car Rental System
+# Support & Maintenance of Car Rental System 
+Current Stable Release: v1.0.0
 
 This plan discusses steps that will keep all of the software, hardware and processes utilized to run the Car Rental System up to date over its lifecycle.
 
@@ -37,6 +38,64 @@ The project follows the guidelines of Semantic Versioning (SemVer):
 * v1. 1. 1- Fixed a bug
 
 Each version is well marked with a tag for easy tracking in github.
+
+## How to Add a New Version
+
+To ensure that the Car Rental System follows a clear and structured versioning strategy, each release should be assigned a version number using **Semantic Versioning (SemVer)**.
+
+**Steps to add or update the version:**
+
+1. **Update Version File**
+
+   * Edit the `version.py` file in the project root:
+
+     ```python
+     # version.py
+     __version__ = "1.0.0"
+     ```
+   * This file keeps track of the current release version.
+
+2. **Display Version in Application**
+
+   * In `main.py` (or your entry point), import and print the version:
+
+     ```python
+     from version import __version__
+     print(f"Car Rental System - Version {__version__}")
+     ```
+   * This makes the version visible when the system runs.
+
+3. **Update Documentation**
+
+   * Add the version number at the top of the `README.md` file:
+
+     ```
+     # Car Rental System
+     **Version:** 1.0.0 (Stable Release)
+     ```
+   * Update `MaintenanceAndSupport.md` to reflect the current stable version.
+
+4. **Tag the Version in GitHub** (if using Git)
+
+   ```bash
+   git tag -a v1.0.0 -m "Stable Release v1.0.0"
+   git push origin v1.0.0
+   ```
+
+   * Tags allow anyone to download the exact version of the project.
+
+---
+
+### Example:
+
+* Current stable version: **v1.0.0**
+* Next feature release: **v1.1.0**
+* Bug fix release: **v1.1.1**
+
+---
+
+ By following this process, the Car Rental System can evolve in a controlled way, with each change clearly tracked and documented.
+
 
 ---
 

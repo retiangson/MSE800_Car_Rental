@@ -20,7 +20,7 @@ It is easier to maintain, to test, and to extend.
 
 ---
 
-## 🔹 Performance Considerations
+## Performance Considerations
 
 It uses **SQLAlchemy** with SQLite.
 
@@ -32,7 +32,7 @@ Performance is good for project scope.
 
 ---
 
-## 🔹 Commenting and Documentation
+## Commenting and Documentation
 
 There are informative **docstrings** to comment about methods and classes. In addition to that, the project supplies:
 
@@ -44,7 +44,7 @@ Good documentation is one of the project's strengths.
 
 ---
 
-## 🔹 Indentation and Formatting
+## Indentation and Formatting
 
 It follows **PEP8 conventions**:
 
@@ -56,7 +56,7 @@ It's a tidy-looking code.
 
 ---
 
-## 🔹 Naming Conventions
+## Naming Conventions
 
 It uses systematic and unambiguous naming throughout:
 

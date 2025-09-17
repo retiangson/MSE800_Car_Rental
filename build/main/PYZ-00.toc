@@ -1813,6 +1813,10 @@
   ('uvicorn.workers',
    'C:\\Python310\\lib\\site-packages\\uvicorn\\workers.py',
    'PYMODULE'),
+  ('version',
+   'D:\\Users\\retia\\OneDrive\\Documents\\Ron '
+   'School\\MSE800_Car_Rental\\version.py',
+   'PYMODULE'),
   ('webbrowser', 'C:\\Python310\\lib\\webbrowser.py', 'PYMODULE'),
   ('win32con',
    'C:\\Users\\retia\\AppData\\Roaming\\Python\\Python310\\site-packages\\win32\\lib\\win32con.py',

@@ -1,5 +1,6 @@
 # Car Rental System – User Documentation  
 ## Overview  
+**Version:** 1.0.0 (Stable Release)  
 Car Rental System The purpose of the Car Rental System application is to automate the rental system.
 
 It replaces the manual paperwork with a digital solution that enables user and car management, booking requests and rental life cycle management.
