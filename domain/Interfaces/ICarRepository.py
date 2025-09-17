@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import List, Optional
 from Domain.Models.Car import Car
+from Contracts.Enums.StatusEnums import CarStatus
 
 class ICarRepository(ABC):
     """Interface defining CRUD and soft-delete operations for Car."""
@@ -21,7 +22,7 @@ class ICarRepository(ABC):
         pass
 
     @abstractmethod
-    def update_status(self, car_id: int, status: str) -> bool:
+    def update_status(self, car_id: int, status: CarStatus) -> bool:
         """Update only the car's status (Available, Inactive, Deleted)."""
         pass
 

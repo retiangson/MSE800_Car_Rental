@@ -3,6 +3,7 @@ from Business.Interfaces.IUserService import IUserService
 from Domain.Interfaces.IUserRepository import IUserRepository
 from Domain.Mappers.UserMapper import UserMapper
 from Contracts.UserDto import UserDto
+from Contracts.Enums.StatusEnums import UserStatus
 
 class UsersService(IUserService):
     """Service layer for managing users (registration, login, updates, soft delete)."""
@@ -32,7 +33,7 @@ class UsersService(IUserService):
             user = next((u for u in users if u.username == username), None)
 
         # Reject if user not found or soft-deleted
-        if not user or user.status == "Deleted":
+        if not user or user.status == UserStatus.DELETED:
             return None
 
         # Verify password hash
@@ -47,7 +48,7 @@ class UsersService(IUserService):
 
         # Exclude soft-deleted unless explicitly included
         if not include_deleted:
-            users = [u for u in users if u.status != "Deleted"]
+            users = [u for u in users if u.status != UserStatus.DELETED]
 
         dtos = [UserMapper.to_dto(u) for u in users]
         return sorted(dtos, key=lambda u: getattr(u, sort_by, u.id))
@@ -58,7 +59,8 @@ class UsersService(IUserService):
     
     def get_by_id(self, user_id: int) -> UserDto | None:
         """Fetch a user by ID (excluding deleted)."""
-        return self.repo.get_by_id(user_id, include_deleted=False)
+        user = self.repo.get_by_id(user_id, include_deleted=False)
+        return UserMapper.to_dto(user)
     
     def update_user(self, dto: UserDto) -> UserDto | None:
         """Update user details (rehash password if plain)."""

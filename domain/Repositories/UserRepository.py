@@ -1,9 +1,10 @@
+from sqlalchemy.exc import IntegrityError
 from passlib.hash import pbkdf2_sha256
 from typing import Optional, List
 from Domain.Interfaces.IUserRepository import IUserRepository
 from Domain.Repositories.DBManager import DBManager
 from Domain.Models.User import User
-
+from Contracts.Enums.StatusEnums import UserStatus
 def _is_hashed(pwd: str) -> bool:
     """
     Check if a string looks like a pbkdf2_sha256 hash.
@@ -50,15 +51,26 @@ class UserRepository(IUserRepository):
         Add a new user to the database.
         - Password will be hashed before saving.
         - Default status is 'Active'.
+        - Prevent duplicate usernames.
         """
         user.password = _hash_if_plain(user.password)
         if not user.status:
-            user.status = "Active"
+            user.status = UserStatus.ACTIVE
+
         with DBManager() as db:
-            db.add(user)
-            db.commit()
-            db.refresh(user)
-            return user
+            # check for duplicates first
+            existing = db.query(User).filter(User.username == user.username).first()
+            if existing:
+                raise ValueError(f"Username '{user.username}' already exists")
+
+            try:
+                db.add(user)
+                db.commit()
+                db.refresh(user)
+                return user
+            except IntegrityError as e:
+                db.rollback()
+                raise ValueError(f"Failed to add user '{user.username}': {str(e)}")
 
     def get_all(self, include_deleted: bool = False) -> List[User]:
         """
@@ -68,7 +80,7 @@ class UserRepository(IUserRepository):
         with DBManager() as db:
             q = db.query(User)
             if not include_deleted:
-                q = q.filter(User.status != "Deleted")
+                q = q.filter(User.status != UserStatus.DELETED)
             return q.all()
 
     def get_by_id(self, user_id: int, include_deleted: bool = False) -> Optional[User]:
@@ -79,7 +91,7 @@ class UserRepository(IUserRepository):
         with DBManager() as db:
             q = db.query(User).filter_by(id=user_id)
             if not include_deleted:
-                q = q.filter(User.status != "Deleted")
+                q = q.filter(User.status != UserStatus.DELETED)
             return q.first()
 
     def find_by_username(self, username: str, include_deleted: bool = False) -> Optional[User]:
@@ -90,7 +102,7 @@ class UserRepository(IUserRepository):
         with DBManager() as db:
             q = db.query(User).filter_by(username=username)
             if not include_deleted:
-                q = q.filter(User.status != "Deleted")
+                q = q.filter(User.status != UserStatus.DELETED)
             return q.first()
 
     def soft_delete(self, user_id: int) -> bool:
@@ -102,7 +114,7 @@ class UserRepository(IUserRepository):
             user = db.get(User, user_id)
             if not user:
                 return False
-            user.status = "Deleted"
+            user.status = UserStatus.DELETED
             db.commit()
             return True
 
@@ -113,9 +125,9 @@ class UserRepository(IUserRepository):
         """
         with DBManager() as db:
             user = db.get(User, user_id)
-            if not user:
+            if not user or user.status != UserStatus.DELETED:
                 return False
-            user.status = "Active"
+            user.status = UserStatus.ACTIVE
             db.commit()
             return True
 

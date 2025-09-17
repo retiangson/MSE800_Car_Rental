@@ -2,6 +2,7 @@ from typing import Optional, List
 from Domain.Interfaces.IRentalRepository import IRentalRepository
 from Domain.Repositories.DBManager import DBManager
 from Domain.Models.Rental import Rental
+from Contracts.Enums.StatusEnums import RentalStatus
 
 class RentalRepository(IRentalRepository):
     """
@@ -18,7 +19,7 @@ class RentalRepository(IRentalRepository):
         """
         with DBManager() as db:
             if not rental.status:
-                rental.status = "Pending"  # default for new rentals
+                rental.status = RentalStatus.PENDING  # default for new rentals
             db.add(rental)
             db.flush()
             db.refresh(rental)
@@ -32,7 +33,7 @@ class RentalRepository(IRentalRepository):
         with DBManager() as db:
             q = db.query(Rental)
             if not include_deleted:
-                q = q.filter(Rental.status != "Deleted")
+                q = q.filter(Rental.status != RentalStatus.DELETED)
             return q.all()
 
     def get_by_id(self, rental_id: int, include_deleted: bool = False) -> Optional[Rental]:
@@ -43,7 +44,7 @@ class RentalRepository(IRentalRepository):
         with DBManager() as db:
             q = db.query(Rental).filter(Rental.id == rental_id)
             if not include_deleted:
-                q = q.filter(Rental.status != "Deleted")
+                q = q.filter(Rental.status != RentalStatus.DELETED)
             return q.first()
 
     def soft_delete(self, rental_id: int) -> bool:
@@ -56,7 +57,7 @@ class RentalRepository(IRentalRepository):
             rental = db.get(Rental, rental_id)
             if not rental:
                 return False
-            rental.status = "Deleted"
+            rental.status = RentalStatus.DELETED
             db.commit()
             return True
 
@@ -71,11 +72,11 @@ class RentalRepository(IRentalRepository):
             rental = db.get(Rental, rental_id)
             if not rental:
                 return False
-            rental.status = "Pending"  # or "Active", depending on workflow
+            rental.status = RentalStatus.PENDING  # or "Active", depending on workflow
             db.commit()
             return True
 
-    def update_status(self, rental_id: int, status: str) -> bool:
+    def update_status(self, rental_id: int, status: RentalStatus) -> bool:
         """
         Update only the status of a rental.
         Example: Pending → Approved → Active → Completed.
@@ -100,3 +101,4 @@ class RentalRepository(IRentalRepository):
                 return False
             rental.total_cost = total_cost
             db.commit()
+            return True

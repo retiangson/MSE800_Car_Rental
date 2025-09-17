@@ -1,4 +1,7 @@
 from dataclasses import dataclass
+from typing import Optional
+from pydantic import BaseModel
+from Contracts.Enums.StatusEnums import RentalStatus
 
 @dataclass
 class RentalDto:
@@ -9,5 +12,5 @@ class RentalDto:
     user_id: int              # Foreign key → User (customer renting)
     start_date: str           # Rental start date (YYYY-MM-DD format)
     end_date: str             # Rental end date (YYYY-MM-DD format)
-    total_cost: float | None  # Calculated cost of the rental (None until set)
-    status: str               # Lifecycle status (Pending, Active, Completed, Cancelled, Deleted)
+    total_cost: Optional[float] = None  # Calculated cost of the rental (None until set)
+    status: Optional[RentalStatus] = None  # Lifecycle status (Pending, Active, Completed, Cancelled, Deleted)
