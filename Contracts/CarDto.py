@@ -1,12 +1,13 @@
-# Domain/DTOs/CarDto.py
 from dataclasses import dataclass
 
 @dataclass
 class CarDto:
-    id: int | None
-    make: str
-    model: str
-    year: int
-    vtype: str
-    base_rate: float
-    status: str  # Active, Deleted, Inactive
+    """Data Transfer Object for Car entity."""
+
+    id: int | None        # Unique identifier (None for new cars not yet saved)
+    make: str             # Manufacturer (e.g., Toyota)
+    model: str            # Model name (e.g., Corolla)
+    year: int             # Year of manufacture
+    vtype: str            # Vehicle type (sedan, SUV, EV, etc.)
+    base_rate: float      # Daily rental base rate
+    status: str           # Lifecycle status (Active, Deleted, Inactive)

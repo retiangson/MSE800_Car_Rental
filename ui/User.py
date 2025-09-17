@@ -2,10 +2,14 @@ import getpass
 from Contracts.UserDto import UserDto
 
 class UserUI:
+    """UI layer for admin/employee user management (create, update, list, delete)."""
+
     def __init__(self, user_service):
+        """Initialize with UserService dependency."""
         self._user_service = user_service
 
     def register_user_ui(self):
+        """Prompt admin to register a new user (admin or customer)."""
         try:
             print("\n=== Register New User ===")
             username = input("Enter username: ")
@@ -26,7 +30,7 @@ class UserUI:
             new_user_dto = UserDto(
                 id=None,
                 username=username,
-                password=password,  # will be hashed in service
+                password=password,  # Will be hashed in service
                 role=role,
                 name=name,
                 contact_number=contact_number,
@@ -41,6 +45,7 @@ class UserUI:
             print(f"Error registering user: {e}")
 
     def update_user_ui(self):
+        """Prompt admin to update an existing user's details."""
         try:
             print("\n=== Update User ===")
             user_id = int(input("Enter User ID to update: "))
@@ -63,7 +68,7 @@ class UserUI:
             updated_user_dto = UserDto(
                 id=user_id,
                 username=username,
-                password=password if password else existing.password,  # keep old if blank
+                password=password if password else existing.password,  # Keep old if blank
                 role=role,
                 name=name,
                 contact_number=contact_number,
@@ -80,14 +85,15 @@ class UserUI:
         except Exception as e:
             print(f"Error updating user: {e}")
 
-
     def list_users_ui(self):
+        """Display all users in the system."""
         print("\n=== All Users ===")
         users = self._user_service.list_users()
         for u in users:
             print(f"ID {u.id}: {u.username} ({u.role}) - {u.name}, {u.email}, Status={u.status}")
 
     def delete_user_ui(self):
+        """Soft delete a user (mark as Deleted)."""
         try:
             user_id = int(input("Enter User ID to delete: "))
             if self._user_service.delete(user_id):

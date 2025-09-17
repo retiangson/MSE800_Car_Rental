@@ -2,10 +2,14 @@ from Contracts.RentalDto import RentalDto
 from datetime import datetime
 
 class RentalUI:
+    """UI layer for managing rentals (create, approve, reject, complete, cancel, delete)."""
+
     def __init__(self, rental_service):
+        """Initialize with RentalService dependency."""
         self._rental_service = rental_service
 
     def create_rental_ui(self, current_user):
+        """Prompt customer to create a rental request."""
         try:
             print("\n=== Create Rental Request ===")
             car_id = int(input("Enter Car ID: "))
@@ -28,6 +32,7 @@ class RentalUI:
             print(f"Error creating rental: {e}")
 
     def list_rentals_ui(self, include_deleted=False):
+        """List all rentals (optionally include deleted)."""
         print("\nAll Rentals:")
         rentals = self._rental_service.list_rentals(include_deleted=include_deleted)
         for r in rentals:
@@ -35,6 +40,7 @@ class RentalUI:
                   f"{r.start_date} → {r.end_date}, Status={r.status}, Total=${r.total_cost}")
             
     def list_customer_rentals_ui(self, current_user, include_deleted=False):
+        """List all rentals for the current customer."""
         print(f"\nRental History for {current_user.name}:")
         rentals = self._rental_service.list_rentals_by_customer(
             user_id=current_user.id,
@@ -48,6 +54,7 @@ class RentalUI:
                 f"Status={r.status}, Total=${r.total_cost}")
         
     def list_active_rentals_ui(self):
+        """List all currently active rentals."""
         print("\nActive Rentals:")
         rentals = self._rental_service.list_active_rentals()
         for r in rentals:
@@ -55,6 +62,7 @@ class RentalUI:
                   f"{r.start_date} → {r.end_date}, Status={r.status}, Total=${r.total_cost}")
 
     def approve_rental_ui(self):
+        """Approve and start a rental request."""
         try:
             rental_id = int(input("Enter Rental ID to approve and start: "))
             if self._rental_service.approve_and_start_rental(rental_id):
@@ -65,6 +73,7 @@ class RentalUI:
             print(f"Error approving rental: {e}")
 
     def reject_rental_ui(self):
+        """Reject a rental request."""
         try:
             rental_id = int(input("Enter Rental ID to reject: "))
             if self._rental_service.reject_rental(rental_id):
@@ -75,6 +84,7 @@ class RentalUI:
             print(f"Error rejecting rental: {e}")
 
     def complete_rental_ui(self):
+        """Complete a rental and calculate final cost."""
         try:
             rental_id = int(input("Enter Rental ID to complete: "))
             return_date = input("Enter actual return date (YYYY-MM-DD): ")
@@ -87,6 +97,7 @@ class RentalUI:
             print(f"Error completing rental: {e}")
 
     def cancel_rental_ui(self):
+        """Cancel a rental request."""
         try:
             rental_id = int(input("Enter Rental ID to cancel: "))
             if self._rental_service.cancel_rental(rental_id):
@@ -97,6 +108,7 @@ class RentalUI:
             print(f"Error cancelling rental: {e}")
 
     def delete_rental_ui(self):
+        """Soft delete a rental (mark as Deleted)."""
         try:
             rental_id = int(input("Enter Rental ID to soft delete: "))
             if self._rental_service.delete_rental(rental_id):

@@ -5,17 +5,22 @@ from Contracts.RentalDto import RentalDto
 from datetime import datetime
 
 class RentalService(IRentalService):
+    """Service layer for managing rentals (create, approve, complete, cancel)."""
+
     def __init__(self, repo: IRentalRepository, car_service, user_service):
+        """Initialize with repository and dependent services (Car, User)."""
         self.repo = repo
         self.car_service = car_service
         self.user_service = user_service
 
     def create_rental(self, dto: RentalDto) -> RentalDto:
+        """Create a new rental (default status = Pending)."""
         rental = RentalMapper.from_dto(dto)
         saved = self.repo.add(rental)
         return RentalMapper.to_dto(saved)
 
     def list_rentals(self, include_deleted: bool = False, sort_by: str = "start_date") -> list[RentalDto]:
+        """List all rentals, sorted by field (default start_date)."""
         rentals = self.repo.get_all(include_deleted=include_deleted)
         if not include_deleted:
             rentals = [r for r in rentals if r.status != "Deleted"]
@@ -23,17 +28,19 @@ class RentalService(IRentalService):
         return sorted(dtos, key=lambda r: getattr(r, sort_by, r.id))
     
     def list_rentals_by_customer(self, user_id: int, include_deleted: bool = False):
+        """List all rentals for a specific customer."""
         rentals = self.repo.get_all(include_deleted=include_deleted)
         rentals = [r for r in rentals if r.user_id == user_id]
         return [RentalMapper.to_dto(r) for r in rentals]
 
     def list_active_rentals(self) -> list[RentalDto]:
+        """List rentals currently marked as Active."""
         rentals = self.repo.get_all()
         active = [r for r in rentals if r.status == "Active"]
         return [RentalMapper.to_dto(r) for r in active]
 
     def approve_and_start_rental(self, rental_id: int) -> bool:
-        """Approve a rental request and activate it immediately."""
+        """Approve a rental request and set status to Active."""
         rental = self.repo.get_by_id(rental_id)
         if not rental or rental.status == "Deleted":
             return False
@@ -42,14 +49,14 @@ class RentalService(IRentalService):
         if not car or car.status == "Deleted":
             return False
 
-        # Calculate rental duration
+        # Calculate rental duration (minimum 1 day)
         start = datetime.strptime(rental.start_date, "%Y-%m-%d")
         end = datetime.strptime(rental.end_date, "%Y-%m-%d")
         days = max((end - start).days, 1)
 
         total_cost = car.base_rate * days
 
-        # Update rental status and cost
+        # Update rental and car status
         updated = self.repo.update_status(rental_id, "Active")
         if updated:
             self.repo.update_total_cost(rental_id, total_cost)
@@ -59,9 +66,11 @@ class RentalService(IRentalService):
         return updated
 
     def reject_rental(self, rental_id: int) -> bool:
+        """Reject a rental request."""
         return self.repo.update_status(rental_id, "Rejected")
 
     def complete_rental(self, rental_id: int, actual_return: datetime) -> bool:
+        """Complete a rental and calculate final cost based on actual return date."""
         rental = self.repo.get_by_id(rental_id)
         if not rental or rental.status == "Deleted":
             return False
@@ -70,9 +79,9 @@ class RentalService(IRentalService):
         if not car or car.status == "Deleted":
             return False
 
+        # Duration calculation
         start = datetime.strptime(rental.start_date, "%Y-%m-%d")
         days = max((actual_return - start).days, 1)
-
         total_cost = car.base_rate * days
 
         updated = self.repo.update_status(rental_id, "Completed")
@@ -84,21 +93,22 @@ class RentalService(IRentalService):
         return updated
 
     def cancel_rental(self, rental_id: int) -> bool:
+        """Cancel a rental request."""
         return self.repo.update_status(rental_id, "Cancelled")
 
     def delete_rental(self, rental_id: int) -> bool:
+        """Soft delete a rental (mark as Deleted)."""
         return self.repo.update_status(rental_id, "Deleted")
     
     def print_receipt(self, rental, car, days: int, total_cost: float, title="RECEIPT"):
-        # Fetch user (assuming you have user_service injected)
+        """Print a rental receipt (basic console output)."""
         customer = self.user_service.get_by_id(rental.user_id)
 
         print(f"\n===== {title} =====")
         print(f"Rental ID   : {rental.id}")
-        print(f"Customer    : {customer.name} ({customer.email})")  # ✅ name instead of ID
+        print(f"Customer    : {customer.name} ({customer.email})")
         print(f"Car         : {car.make} {car.model} ({car.year})")
         print(f"Period      : {rental.start_date} → {rental.end_date} ({days} days)")
         print(f"Rate/Day    : ${car.base_rate:.2f}")
         print(f"Total Cost  : ${total_cost:.2f}")
         print("==========================\n")
-

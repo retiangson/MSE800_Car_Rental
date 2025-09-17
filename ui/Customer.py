@@ -2,14 +2,19 @@ import getpass
 from Contracts.UserDto import UserDto
 
 class CustomerUI:
+    """UI layer for customer-related actions (registration)."""
+
     def __init__(self, user_service):
+        """Initialize with UserService dependency."""
         self._user_service = user_service
 
     def customer_register_ui(self):
+        """Prompt customer for details and register a new account."""
         try:
             print("\n=== Customer Registration ===")
             username = input("Choose username: ")
 
+            # Hide password input for security
             password = getpass.getpass("Choose password: ")
             confirm_password = getpass.getpass("Confirm password: ")
 
@@ -25,7 +30,7 @@ class CustomerUI:
             new_user_dto = UserDto(
                 id=None,
                 username=username,
-                password=password,  # raw, will be hashed in service
+                password=password,  # Raw, will be hashed in service
                 role="customer",
                 name=name,
                 contact_number=contact_number,

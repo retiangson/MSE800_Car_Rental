@@ -2,12 +2,14 @@ from dataclasses import dataclass
 
 @dataclass
 class UserDto:
-    id: int | None
-    username: str
-    password: str
-    role: str        # admin / customer
-    name: str
-    contact_number: str | None
-    email: str | None
-    address: str | None
-    status: str      # Active, Deleted, Inactive
+    """Data Transfer Object for User entity."""
+
+    id: int | None              # Unique identifier (None for new users not yet saved)
+    username: str               # Unique login name
+    password: str               # Plaintext (from UI) or hashed password
+    role: str                   # User role (admin / customer)
+    name: str                   # Full display name
+    contact_number: str | None  # Optional contact number
+    email: str | None           # Optional email address
+    address: str | None         # Optional address
+    status: str                 # Lifecycle status (Active, Deleted, Inactive)

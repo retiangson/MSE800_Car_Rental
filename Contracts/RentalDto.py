@@ -2,10 +2,12 @@ from dataclasses import dataclass
 
 @dataclass
 class RentalDto:
-    id: int | None
-    car_id: int
-    user_id: int
-    start_date: str   # stored as YYYY-MM-DD string for UI simplicity
-    end_date: str
-    total_cost: float | None
-    status: str       # Pending, Active, Completed, Cancelled, Deleted
+    """Data Transfer Object for Rental entity."""
+
+    id: int | None            # Unique identifier (None if not yet saved)
+    car_id: int               # Foreign key → Car being rented
+    user_id: int              # Foreign key → User (customer renting)
+    start_date: str           # Rental start date (YYYY-MM-DD format)
+    end_date: str             # Rental end date (YYYY-MM-DD format)
+    total_cost: float | None  # Calculated cost of the rental (None until set)
+    status: str               # Lifecycle status (Pending, Active, Completed, Cancelled, Deleted)

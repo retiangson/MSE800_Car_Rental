@@ -1,10 +1,14 @@
 from Contracts.CarDto import CarDto
 
 class CarUI:
+    """UI layer for managing car operations (add, update, list, delete, restore, etc.)."""
+
     def __init__(self, car_service):
+        """Initialize with CarService dependency."""
         self._car_service = car_service  
 
     def add_car_ui(self):
+        """Prompt user for car details and add a new car."""
         try:
             make = input("Enter make: ")
             model = input("Enter model: ")
@@ -29,6 +33,7 @@ class CarUI:
             print(f"Error adding car: {e}")
 
     def update_car_ui(self):
+        """Prompt user for updates to an existing car."""
         try:
             car_id = int(input("Enter Car ID to update: "))
             existing = self._car_service.get_by_id(car_id)
@@ -67,6 +72,7 @@ class CarUI:
             print(f"Error updating car: {e}")
                 
     def list_cars_ui(self):
+        """List all cars (including deleted ones)."""
         print("\nAll Cars:")
         cars = self._car_service.list_cars(include_deleted=True)
         for car in cars:
@@ -74,6 +80,7 @@ class CarUI:
                   f"${car.base_rate}/day - Status: {car.status}")
 
     def list_available_cars_ui(self):
+        """List only cars available for rental."""
         print("\nAvailable Cars:")
         cars = self._car_service.list_available_cars()
         for car in cars:
@@ -81,6 +88,7 @@ class CarUI:
                   f"${car.base_rate}/day - Status: {car.status}")
 
     def delete_car_ui(self):
+        """Soft delete a car (mark status as Deleted)."""
         try:
             car_id = int(input("Enter Car ID to mark as Deleted: "))
             if self._car_service.delete_car(car_id):
@@ -91,6 +99,7 @@ class CarUI:
             print(f"Error deleting car: {e}")
 
     def restore_car_ui(self):
+        """Restore a previously deleted car (set status to Available)."""
         try:
             car_id = int(input("Enter Car ID to restore (make Available): "))
             if self._car_service.restore_car(car_id):
@@ -101,6 +110,7 @@ class CarUI:
             print(f"Error restoring car: {e}")
 
     def rent_car_ui(self):
+        """Mark a car as Active (rented)."""
         try:
             car_id = int(input("Enter Car ID to mark as Active (rented): "))
             if self._car_service.rent_car(car_id):
@@ -111,6 +121,7 @@ class CarUI:
             print(f"Error renting car: {e}")
 
     def return_car_ui(self):
+        """Mark a car as Available (returned)."""
         try:
             car_id = int(input("Enter Car ID to mark as Available (returned): "))
             if self._car_service.return_car(car_id):
@@ -121,6 +132,7 @@ class CarUI:
             print(f"Error returning car: {e}")
 
     def send_to_maintenance_ui(self):
+        """Mark a car as under Maintenance."""
         try:
             car_id = int(input("Enter Car ID to mark as under Maintenance: "))
             if self._car_service.send_to_maintenance(car_id):
