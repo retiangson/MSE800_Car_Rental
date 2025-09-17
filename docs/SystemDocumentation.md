@@ -131,8 +131,8 @@ This layered separation improves **maintainability, testability, and scalability
 * **Admin Use Cases**: Manage Users, Manage Cars, Manage Rentals.
 * **Customer Use Cases**: Register, Login, Browse Cars, Create Rentals.
 
-📎 [User Case Diagram](docs/User_Case_Diagram.pdf)
-![Use Case Diagram](docs/User_Case_Diagram.png)
+📎 [User Case Diagram](User_Case_Diagram.pdf)  
+![Use Case Diagram](User_Case_Diagram.png)  
 ---
 
 ### 🔹 Sequence Diagram
@@ -140,8 +140,8 @@ This layered separation improves **maintainability, testability, and scalability
 * Shows flow between **User → UI → Services → Database**.
 * Captures login, rental creation, approval, and return processes.
 
-📎 [Sequence Diagram](docs/Sequence_Diagram.pdf)
-![Sequence Diagram](docs/Sequence_Diagram.png)
+📎 [Sequence Diagram](Sequence_Diagram.pdf)  
+![Sequence Diagram](Sequence_Diagram.png)  
 ---
 
 ### 🔹 Class Diagram
@@ -149,8 +149,8 @@ This layered separation improves **maintainability, testability, and scalability
 * **UI Classes** ↔ **Service Classes** ↔ **Repository Classes** ↔ **Domain Models & DTOs**.
 * Demonstrates layered architecture and decoupling.
 
-📎 [Class Diagram](docs/Class_Diagram.pdf)
-![Class Diagram](docs/class_diagram.png)
+📎 [Class Diagram](Class_Diagram.pdf)  
+![Class Diagram](Class_Diagram.png)  
 ---
 
 ## 7. Summary
@@ -163,7 +163,3 @@ The Car Rental System demonstrates:
 * Application of **best practices** in maintainability, scalability, and testability.
 
 Together, the UML diagrams and architectural choices ensure the system is **robust, extensible, and professionally engineered**.
-
----
-
-Do you want me to now **package this as a polished PDF (System Documentation.pdf)**, just like I did for the User Documentation, so you can submit both together?

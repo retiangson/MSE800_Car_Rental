@@ -1,5 +1,4 @@
 # Car Rental System – User Documentation  
-
 ## Overview  
 Car Rental System The purpose of the Car Rental System application is to automate the rental system.
 
@@ -9,7 +8,11 @@ This platform has been implemented following OOP (Object-Oriented Programming), 
 
 Installation & Configuration.
 
-The system follows **Object-Oriented Programming (OOP)** principles, **layered architecture**, and **design patterns** (Repository, Service Layer, DTOs, Singleton for DB Manager).  
+The system follows **Object-Oriented Programming (OOP)** principles, **layered architecture**, and **design patterns** (Repository, Service Layer, DTOs, Singleton for DB Manager).   
+   
+[System Documentation](docs/SystemDocumentation.md)  
+[Coding Standard](docs/CodingStandard.md)  
+[Support And Maintenance](docs/Support_And_Maintenance.md)  
 
 ---
 
