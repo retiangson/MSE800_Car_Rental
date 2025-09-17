@@ -1,8 +1,13 @@
 # Car Rental System – User Documentation  
 
 ## Overview  
-The **Car Rental System** is a Python-based application designed to automate the rental process for a car rental company.  
-It replaces manual paperwork with a digital solution that supports **user management, car management, rental booking, and rental lifecycle management**.  
+Car Rental System The purpose of the Car Rental System application is to automate the rental system.
+
+It replaces the manual paperwork with a digital solution that enables user and car management, booking requests and rental life cycle management.
+
+This platform has been implemented following OOP (Object-Oriented Programming), multilayer-based development and also applying Design Patterns (Repository, Service Layer, DTO’s, Singleton for DB Manager).
+
+Installation & Configuration.
 
 The system follows **Object-Oriented Programming (OOP)** principles, **layered architecture**, and **design patterns** (Repository, Service Layer, DTOs, Singleton for DB Manager).  
 
@@ -20,7 +25,7 @@ The system follows **Object-Oriented Programming (OOP)** principles, **layered a
 
 ```bash
 # Clone the repository or extract the ZIP
-git clone https://github.com/<your-repo>/CarRentalSystem.git
+git clone https://github.com/retiangson/MSE800_Car_Rental.git
 cd CarRentalSystem
 
 # Create virtual environment
@@ -94,18 +99,18 @@ This version does not require Python or dependencies.
 
 ## Initial Admin Access
 
-When you first run the system, it will automatically seed a default **Admin user** if no users exist.
+At the first load, this system automatically creates an **Admin user** if no other users are found on initial start-up of the system.
 
 * **Username:** `admin`
 * **Password:** `admin`
 
-It is recommended to log in as Admin immediately and **create new users** for proper role management.
+You should log in with Admin as soon as the site is up and running and create some **new users** to handle roles correctly.
 
 ---
 
 ## Running Tests
 
-Unit tests are located in the `tests/` directory and use **pytest**.
+Tests reside in the `tests/` directory and use **pytest**.
 
 Run all tests with:
 
@@ -196,9 +201,11 @@ MSE800_Car_Rental/
 
 ## License  
 
-This project is released under the **MIT License**:  
-- Free to use, modify, and distribute.  
-- No warranty provided.  
+MIT License ## License This project is released under the **MIT license**:
+
+Free for personal and commercial use, but not for resale or inclusion in app / website!
+
+No warranty provided.
 
 See full text in `LICENSE` file.  
 
