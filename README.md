@@ -236,7 +236,8 @@ In order to make the car renting system extendable in future releases, the follo
   Thus both users and admins will be able to work with the system from any browser, regardless of the console-based interface.  
 
 These updates will make the system easier to use and more accessible for our users, while aligning with modern industry-standard best practices.  
-```
+
+---
 
 ## Developer Credit  
 
