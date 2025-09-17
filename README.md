@@ -223,6 +223,20 @@ See full text in `LICENSE` file.
 - No payment integration yet (future feature).  
 
 ---
+## Future Enhancements  
+
+In order to make the car renting system extendable in future releases, the following functionality is going to be provided:  
+
+- **Mobile Application**  
+  We are going to develop a mobile app (iOS and Android).  
+  They’ll be able to peruse available cars, make reservations and handle booking on their smartphones.  
+
+- **Web Application via API**  
+  A web application that talks to the Car Rental System using RESTful API’s.  
+  Thus both users and admins will be able to work with the system from any browser, regardless of the console-based interface.  
+
+These updates will make the system easier to use and more accessible for our users, while aligning with modern industry-standard best practices.  
+```
 
 ## Developer Credit  
 

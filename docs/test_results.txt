@@ -1,0 +1,53 @@
+﻿============================= test session starts =============================
+platform win32 -- Python 3.10.8, pytest-8.4.2, pluggy-1.6.0 -- C:\Python310\python.exe
+cachedir: .pytest_cache
+rootdir: D:\Users\retia\OneDrive\Documents\Ron School\MSE800_Car_Rental
+plugins: anyio-4.10.0, Faker-37.6.0
+collecting ... collected 44 items
+
+tests/IntegrationTests/test_cars_api.py::test_add_and_list_cars PASSED   [  2%]
+tests/IntegrationTests/test_cars_api.py::test_delete_and_restore_car PASSED [  4%]
+tests/IntegrationTests/test_rentals_api.py::test_create_approve_and_complete_rental PASSED [  6%]
+tests/IntegrationTests/test_users_api.py::test_register_and_get_user PASSED [  9%]
+tests/RepositoryTests/test_car_repository.py::test_add_car PASSED        [ 11%]
+tests/RepositoryTests/test_car_repository.py::test_update_car PASSED     [ 13%]
+tests/RepositoryTests/test_car_repository.py::test_soft_delete_car PASSED [ 15%]
+tests/RepositoryTests/test_car_repository.py::test_restore_car PASSED    [ 18%]
+tests/RepositoryTests/test_car_repository.py::test_get_by_id_excludes_deleted PASSED [ 20%]
+tests/RepositoryTests/test_car_repository.py::test_list_cars_excludes_deleted PASSED [ 22%]
+tests/RepositoryTests/test_car_repository.py::test_get_all_is_alias_of_list PASSED [ 25%]
+tests/RepositoryTests/test_car_repository.py::test_update_status PASSED  [ 27%]
+tests/RepositoryTests/test_rental_repository.py::test_add_rental PASSED  [ 29%]
+tests/RepositoryTests/test_rental_repository.py::test_get_all_and_get_by_id PASSED [ 31%]
+tests/RepositoryTests/test_rental_repository.py::test_soft_delete_and_restore PASSED [ 34%]
+tests/RepositoryTests/test_rental_repository.py::test_update_status PASSED [ 36%]
+tests/RepositoryTests/test_rental_repository.py::test_update_total_cost PASSED [ 38%]
+tests/RepositoryTests/test_rental_repository.py::test_get_by_id_excludes_deleted PASSED [ 40%]
+tests/RepositoryTests/test_user_repository.py::test_seed_default_users PASSED [ 43%]
+tests/RepositoryTests/test_user_repository.py::test_add_user PASSED      [ 45%]
+tests/RepositoryTests/test_user_repository.py::test_get_all_and_get_by_id PASSED [ 47%]
+tests/RepositoryTests/test_user_repository.py::test_find_by_username PASSED [ 50%]
+tests/RepositoryTests/test_user_repository.py::test_soft_delete_and_restore PASSED [ 52%]
+tests/RepositoryTests/test_user_repository.py::test_update_user PASSED   [ 54%]
+tests/RepositoryTests/test_user_repository.py::test_get_by_id_excludes_deleted PASSED [ 56%]
+tests/ServiceTests/test_car_service.py::test_add_car_defaults_available PASSED [ 59%]
+tests/ServiceTests/test_car_service.py::test_list_cars_and_available PASSED [ 61%]
+tests/ServiceTests/test_car_service.py::test_delete_and_restore_car PASSED [ 63%]
+tests/ServiceTests/test_car_service.py::test_rent_and_return_car PASSED  [ 65%]
+tests/ServiceTests/test_car_service.py::test_send_to_maintenance PASSED  [ 68%]
+tests/ServiceTests/test_car_service.py::test_update_car PASSED           [ 70%]
+tests/ServiceTests/test_car_service.py::test_get_by_id PASSED            [ 72%]
+tests/ServiceTests/test_rental_service.py::test_create_rental PASSED     [ 75%]
+tests/ServiceTests/test_rental_service.py::test_approve_and_start_rental PASSED [ 77%]
+tests/ServiceTests/test_rental_service.py::test_complete_rental PASSED   [ 79%]
+tests/ServiceTests/test_rental_service.py::test_reject_rental PASSED     [ 81%]
+tests/ServiceTests/test_rental_service.py::test_cancel_rental PASSED     [ 84%]
+tests/ServiceTests/test_rental_service.py::test_delete_rental PASSED     [ 86%]
+tests/ServiceTests/test_rental_service.py::test_list_rentals_and_active PASSED [ 88%]
+tests/ServiceTests/test_user_service.py::test_register_user_and_login PASSED [ 90%]
+tests/ServiceTests/test_user_service.py::test_list_users PASSED          [ 93%]
+tests/ServiceTests/test_user_service.py::test_delete_and_restore_user PASSED [ 95%]
+tests/ServiceTests/test_user_service.py::test_get_by_id PASSED           [ 97%]
+tests/ServiceTests/test_user_service.py::test_update_user PASSED         [100%]
+
+============================= 44 passed in 3.58s ==============================
