@@ -243,7 +243,7 @@ These updates will make the system easier to use and more accessible for our use
 
 **Car Rental System** was developed by:  
 
-**Name:** Ronald Ephraim Tiangson  
+**Name:** Ronald Ephraim C. Tiangson  
 **Programme:** Master of Software Engineering (MSE800)  
 **Institution:** Yoobee College, New Zealand  
 **Supervisor Name:** Mohammad Norouzifard  
