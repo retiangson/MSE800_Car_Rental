@@ -1,10 +1,11 @@
-# Domain/Repositories/DBManager.py
 import os
+import sys
 from contextlib import contextmanager
 from typing import Optional
 
 from sqlalchemy import create_engine, event
 from sqlalchemy.orm import DeclarativeBase, sessionmaker, scoped_session, Session
+
 
 # ---------- Shared Base (import this in your ORM models) ----------
 class Base(DeclarativeBase):
@@ -13,20 +14,26 @@ class Base(DeclarativeBase):
 
 class Config:
     """Configuration for database."""
-    DB_URL  = os.getenv("DB_URL")                 # e.g. "sqlite:///car_rental.db"
+    DB_URL = os.getenv("DB_URL")  # e.g. "sqlite:///car_rental.db"
     DB_NAME = os.getenv("DB_NAME", "car_rental.db")
 
 
 def _resolve_db_url() -> str:
-    """Always resolve to an absolute file path for SQLite."""
+    """Resolve DB URL with fallback to project-root SQLite file.
+       Auto-switch to in-memory SQLite when running under pytest.
+    """
+    if "pytest" in sys.modules:
+        # Use shared in-memory DB so FastAPI + SQLAlchemy share schema
+        return "sqlite+pysqlite:///file::memory:?cache=shared&uri=true"
+
     if Config.DB_URL:
         return Config.DB_URL
+
     project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "../.."))
     db_path = os.path.join(project_root, Config.DB_NAME)
     return f"sqlite:///{db_path}"
 
-
-# Global engine
+# Global engine & session factory
 DB_URL = _resolve_db_url()
 engine = create_engine(
     DB_URL,
@@ -103,3 +110,7 @@ class DBManager:
 def get_session() -> Session:
     """Return the current thread’s Session (creates one if needed)."""
     return ScopedSession()
+
+import Domain.Models.User
+import Domain.Models.Car
+import Domain.Models.Rental
